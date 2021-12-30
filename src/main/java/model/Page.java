@@ -1,19 +1,21 @@
 package model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
 @Entity
+@Table (name = "page")
 public class Page {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
     private String path;
     private int code;
     private String content;
 
-    public Page() {
+    public Page(){
+
     }
 
     public int getId() {
@@ -29,6 +31,7 @@ public class Page {
     }
 
     public void setPath(String path) {
+
         this.path = path;
     }
 

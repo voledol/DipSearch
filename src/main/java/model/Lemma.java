@@ -3,6 +3,7 @@ package model;
 import javax.persistence.*;
 
 @Entity
+@Table (name = "lemma")
 public class Lemma {
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
@@ -22,5 +23,17 @@ public class Lemma {
 
     public int getFrequency() {
         return frequency;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setLemma(String lemma) {
+        this.lemma = lemma;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
     }
 }

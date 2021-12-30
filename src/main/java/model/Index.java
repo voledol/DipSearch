@@ -4,16 +4,16 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-public class Index implements Serializable {
+@Table (name = "indexeslist")
+public class Index  {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int id;
-    @OneToOne
-    @JoinColumn(name = "page_id")
-    public Page page;
-    @OneToOne
-    @JoinColumn(name = "lemma_")
-    public Lemma lemma;
+    @Column (name = "page_id")
+    public int  page_id;
+    @Column (name = "lemma_id")
+    public int lemma_id;
+    @Column (name = "lemma_rank")
     public float rank;
 
     public int getId() {
@@ -24,27 +24,27 @@ public class Index implements Serializable {
         this.id = id;
     }
 
-    public Page getPage() {
-        return page;
-    }
-
-    public void setPage(Page page) {
-        this.page = page;
-    }
-
-    public Lemma getLemma() {
-        return lemma;
-    }
-
-    public void setLemma(Lemma lemma) {
-        this.lemma = lemma;
-    }
-
     public float getRank() {
         return rank;
     }
 
     public void setRank(float rank) {
         this.rank = rank;
+    }
+
+    public int getPage_id() {
+        return page_id;
+    }
+
+    public void setPage_id(int page_id) {
+        this.page_id = page_id;
+    }
+
+    public int getLemma_id() {
+        return lemma_id;
+    }
+
+    public void setLemma_id(int lemma_id) {
+        this.lemma_id = lemma_id;
     }
 }

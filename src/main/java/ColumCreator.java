@@ -4,11 +4,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.HashSet;
 
 public class ColumCreator {
-     public static HashSet<sitePage> pages = new HashSet<>();
-     public static Connection.Response response = null;
+     public static Connection.Response response;
 
      public static Connection.Response connect(String url){
           try{

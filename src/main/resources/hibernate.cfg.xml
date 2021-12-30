@@ -17,11 +17,11 @@
         <!-- Set the current session context -->
         <property name="current_session_context_class">thread</property>
         <!-- Drop and re-create the database schema on startup -->
-        <property name="hbm2ddl.auto">validate</property>
+        <property name="hbm2ddl.auto" >update</property>
 
-        <mapping class="Page"></mapping>
-        <mapping class="Field"></mapping>
-        <mapping class="Index"></mapping>
-        <mapping class="Lemma"></mapping>
+        <mapping class="model.Page"></mapping>
+        <mapping class="model.Field"></mapping>
+        <mapping class="model.Index"></mapping>
+        <mapping class="model.Lemma"></mapping>
     </session-factory>
 </hibernate-configuration>

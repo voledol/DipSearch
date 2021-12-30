@@ -20,7 +20,7 @@ public class LemMaker {
 
         String[] words = text.toLowerCase()
                 .replaceAll("[A-z]", "")
-                .replaceAll("[^\\p{L}\\p{Z}]+", "")
+                .replaceAll("[^\\p{L}\\p{Z}]+", "").replaceAll("[^А-я,\\s]", "")
                 .split("\\s");
         for (String word : words){
          if(word.isEmpty()){

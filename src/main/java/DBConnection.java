@@ -1,3 +1,5 @@
+import model.Index;
+
 import java.sql.*;
 
 public class  DBConnection {
@@ -6,19 +8,18 @@ public class  DBConnection {
     private static final String passwordDB = "Gorila123";
     private static final String url = "jdbc:mysql://127.0.0.1:3306/search_engine?useSSL=false&serverTimezone=UTC";
 
-    public static Connection getConnection(){
-        if(connection == null){
-            try{
-                connection = DriverManager.getConnection(url,userName,passwordDB);
-            }
-
-            catch (SQLException e){
+    public static Connection getConnection() {
+        if (connection == null) {
+            try {
+                connection = DriverManager.getConnection(url, userName, passwordDB);
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         return connection;
     }
-//    public static Connection getConnection(){
+
+    //    public static Connection getConnection(){
 //        if(connection == null){
 //            try{
 //                connection = DriverManager.getConnection(url,userName,passwordDB);
@@ -38,8 +39,8 @@ public class  DBConnection {
 //        }
 //        return connection;
 //    }
-    public static void insertPage(sitePage page){
-        String insertQuery = "('" + page.getPath() + "', '" + page.getCode() + "', '"+ page.getContent() +"')";
+    public static void insertPage(sitePage page) {
+        String insertQuery = "('" + page.getPath() + "', '" + page.getCode() + "', '" + page.getContent() + "')";
         String sql = "INSERT INTO search_engine(path, code, content) " +
                 "VALUES" + insertQuery + ";";
         try {
@@ -49,5 +50,14 @@ public class  DBConnection {
         }
     }
 
-
+    public static void insertIndex(Index index) {
+        String insertQuery = "(" + index.getPage_id() + ", " + index.getLemma_id() + ", " + index.getRank() + ")";
+        String sql = "INSERT INTO index(page_id, lemma_id, rank) " +
+                "VALUES" + insertQuery + ";";
+        try {
+            DBConnection.getConnection().createStatement().execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
