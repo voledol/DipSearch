@@ -118,6 +118,7 @@ public class Indexation {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Hibernate.closeSession();
     }
     public static HashMap<String, Float> calculateRank(HashMap<String, Integer> titleLemm,HashMap<String, Integer> bodyLemm){
         float rank;

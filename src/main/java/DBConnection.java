@@ -19,26 +19,6 @@ public class  DBConnection {
         return connection;
     }
 
-    //    public static Connection getConnection(){
-//        if(connection == null){
-//            try{
-//                connection = DriverManager.getConnection(url,userName,passwordDB);
-//                connection.createStatement().execute("DROP TABLE IF EXISTS search_engine");
-//                connection.createStatement().execute("CREATE TABLE search_engine(" +
-//                        "id INT NOT NULL AUTO_INCREMENT, " +
-//                        "path TEXT NOT NULL, " +
-//                        "code INT NOT NULL, " +
-//                        "content MEDIUMTEXT NOT NULL, " +
-//                        "PRIMARY KEY(id)," +
-//                        "UNIQUE KEY  path_id(path(50), id))");
-//            }
-//            catch (SQLException e){
-//                e.printStackTrace();
-//
-//            }
-//        }
-//        return connection;
-//    }
     public static void insertPage(sitePage page) {
         String insertQuery = "('" + page.getPath() + "', '" + page.getCode() + "', '" + page.getContent() + "')";
         String sql = "INSERT INTO search_engine(path, code, content) " +
@@ -59,5 +39,43 @@ public class  DBConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static float getRank(int page_id, int lemm_id) {
+        String sql = "SELECT lemma_rank FROM search_engine.indexeslist where page_id = " + page_id + " and lemma_id = " + lemm_id + ";";
+        float rank = 0;
+        try {
+            ResultSet rs = DBConnection.getConnection().createStatement().executeQuery(sql);
+            if (rs.next()) {
+                rank = rs.getFloat(1);
+            } else {
+                rank = 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rank;
+    }
+
+    public static ResultPage getPage(int id) {
+        ResultPage page = new ResultPage();
+        String sql = "SELECT path FROM search_engine.page where id = " + id + " limit 1;";
+        String url;
+        try {
+            ResultSet rs = DBConnection.getConnection().createStatement().executeQuery(sql);
+            if(rs.next()){
+                url = rs.getString(1);
+                page.setUrl(url);
+                page.setTitle(ColumCreator.getTitle(url));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        return page;
     }
 }

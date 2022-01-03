@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table (name = "lemma")
-public class Lemma {
+public class Lemma implements Comparable<Lemma>{
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
     public int id;
@@ -36,4 +36,10 @@ public class Lemma {
     public void setFrequency(int frequency) {
         this.frequency = frequency;
     }
+
+    @Override
+    public int compareTo(Lemma o) {
+        return  o.getFrequency() - this.getFrequency();
+    }
+
 }

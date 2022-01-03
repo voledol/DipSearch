@@ -20,7 +20,10 @@ public class Main {
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
-        Indexation.indexation();
+       // Indexation.indexation();
+        //SearchSystem.find("Знаете ли вы, что Кара Делевинь и Джейден Смит побрились перед съёмками наголо.");
+
+        SearchSystem.find("Знаете ли вы, что Кара Делевинь и Джейден Смит побрились перед съёмками наголо.");
 
 
 

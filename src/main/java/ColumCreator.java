@@ -36,4 +36,18 @@ public class ColumCreator {
                e.printStackTrace();
           }
      }
+     public static String getTitle(String url){
+          ColumCreator.connect(url);
+          String title = "";
+          try {
+               Document doc = response.parse();
+               Elements content = doc.select("title");
+               title = content.text();
+          }
+          catch (IOException e) {
+               e.printStackTrace();
+          }
+          return title;
+
+     }
 }
