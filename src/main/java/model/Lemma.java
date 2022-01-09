@@ -12,6 +12,10 @@ public class Lemma implements Comparable<Lemma>{
     public String lemma;
     @Column (name = "frequency")
     public int frequency;
+    public int site_id;
+
+    public int getSite_id() {return site_id;}
+    public void setSite_id(int site_id) {this.site_id = site_id;}
 
     public int getId() {
         return id;

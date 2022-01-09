@@ -1,7 +1,5 @@
 package model;
 
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 @Entity
@@ -13,6 +11,7 @@ public class Page {
     private String path;
     private int code;
     private String content;
+    private int site_id;
 
     public Page(){
     }
@@ -40,4 +39,6 @@ public class Page {
     public void setContent(String content) {
         this.content = content;
     }
+    public int getSite_id() {return site_id;}
+    public void setSite_id(int site_id) {this.site_id = site_id;}
 }

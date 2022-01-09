@@ -1,3 +1,5 @@
+package main;
+
 import model.Index;
 import model.Lemma;
 import model.Page;
@@ -9,6 +11,7 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,20 +23,22 @@ public class Hibernate {
     public static Metadata metadata = new MetadataSources(registry).getMetadataBuilder().build();
     public static SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
     public static Session session = sessionFactory.openSession();
+
+   @Transactional
     public static void save(Object obj){
         Transaction transaction = session.beginTransaction();
-
         session.save(obj);
         transaction.commit();
     }
-    public static List<Page> getPage(){
+    public static Page getPage(String  url){
 
         String sql = "From " + Page.class.getSimpleName();
 
-        List<Page> pages = session.createQuery(sql).list();
+        List<Page> pages = session.createQuery(sql).setMaxResults(1).list();
 
-        return pages;
+        return pages.get(0);
     }
+    @Transactional
     public static Lemma updateLemma(String lemma){
 
         String sql = "From " + Lemma.class.getSimpleName()+" Where lemma = '"+lemma+"'";
@@ -48,7 +53,7 @@ public class Hibernate {
     }
     public static boolean findLemm(String lemma){
         String sql = "From " + Lemma.class.getSimpleName()+" Where lemma = '"+lemma+"'";
-        List<Lemma> lemmas = session.createQuery(sql).setMaxResults(1).list();
+        List lemmas = session.createQuery(sql).setMaxResults(1).list();
         if(lemmas.isEmpty()){
             return false;
         }
@@ -83,14 +88,13 @@ public class Hibernate {
         }
         return lems;
     }
-    public static List<Index> findPageList(Lemma lemma){// если это заработает будет чудо
+    public static List<Index> findPageList(Lemma lemma){
         String sql =  "From " + Index.class.getSimpleName() + " where lemma_id = " +lemma.getId();
         List<Index> indexes = session.createQuery(sql).list();
         return indexes;
     }
-    public static List<Index> removePages(Lemma lemma, List<Index> indexList){// если это заработает будет чудо
+    public static List<Index> removePages(Lemma lemma, List<Index> indexList){
         List<Index> finPages = new ArrayList<>();
-        // вот этот кусок мне не нравится
         for(Index index: indexList){
             String sql1 = "From " + Index.class.getSimpleName() + " where page_id = " +index.getPage_id();
             List<Index> pagesId = session.createQuery(sql1).list();
@@ -105,10 +109,4 @@ public class Hibernate {
         }
         return finPages;
     }
-//    public static float relevant(int page_id, int lemm_id ){
-//      float  relevant = 0;
-//      String sql = "From " + Index.class.getSimpleName() + " where page_id = " + page_id + "and lemm_id = " +lemm_id;
-//      session.createQuery(sql).setMaxResults(1).list().get(0).getRank;
-//      return relevant;
-//    }
 }

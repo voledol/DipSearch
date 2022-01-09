@@ -1,5 +1,8 @@
+package main;
+
 import model.Index;
 import model.Lemma;
+import model.ResultPage;
 
 import java.io.IOException;
 import java.util.*;

@@ -1,3 +1,5 @@
+package model;
+
 public class ResultPage {
     String url;
     String title;
