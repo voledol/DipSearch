@@ -50,21 +50,6 @@ public class DefaultController {
 
         return sucsess ;
     }
-//    @RequestMapping("/api/stopIndexing")
-//    @ResponseBody
-//    public String stopIndexing(){
-//        if(!SiteMapper.isWork()){
-//            return "{\n" +
-//                    "'result': false,\n" +
-//                    "'error': \"Индексация не запущена\"\n" +
-//                    "            }";
-//
-//        }
-//
-//            return "{\n" +
-//                    "\t'result': true\n" +
-//                    "}\n";
-//    }
     @RequestMapping("/api/indexpage")
     @ResponseBody
     public String indexingPage(@RequestParam String url){
@@ -80,13 +65,6 @@ public class DefaultController {
                 "указанных в конфигурационном файле\"\n" +
                 "}\n";
     }
-//    @RequestMapping("/api/statistics")
-//    @ResponseBody
-//    public String getStatistic(@RequestParam String url){
-//        String result;
-//
-//        return ;
-//    }
 
 }
 
