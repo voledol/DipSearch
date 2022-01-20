@@ -28,44 +28,43 @@ public class DefaultController {
     @ResponseBody
     public String startIndexing() {
         List<String> sites = DBConnection.getSites();
-        String sucsess;
-        if(SiteMapper.isWork()){
-            sucsess= "{\n" +
-                    "\t'result': false,\n" +
-                    "\t'error': \"Индексация уже запущена\"\n" +
-                    "}\n";
-            return sucsess;
-        }
-        else{
+        String sucsess = "true";
+        List< SiteMapper> tasks = new ArrayList<>();
+//        for(int i = 0; i < sites.size(); i++){
+//
+//            tasks.add(new SiteMapper(new Nodelink(sites.get(i))));
+//
+//        }
+//        new ForkJoinPool().invokeAll(tasks);
+        ForkJoinPool pool1 = new ForkJoinPool(2, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false);
+        ForkJoinPool pool2 = new ForkJoinPool(2, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false);
+        pool1.invoke(new SiteMapper(new Nodelink(sites.get(1))));
+        pool1.invoke(new SiteMapper(new Nodelink(sites.get(2))));
 
-            for (int i = 0; i < sites.size()-1;i++){
-                main.Nodelink rootUrl = new main.Nodelink(sites.get(i));
-                SiteMapper map = new SiteMapper(rootUrl);
-                DBConnection.updateSiteINDEXING(sites.get(i));
-                map.compute();
-                DBConnection.updateSiteINDEXED(sites.get(i));
-            }
-        }
-        sucsess = "{\n" +
-                "\t'result': true\n" +
-                "}\n";
+
+//        for(int i = 0; i < sites.size(); i++){
+//            Executor executor = Executors.newSingleThreadExecutor();
+//            executor.execute(new SiteMapper(new Nodelink(sites.get(i))));
+//        }
+
+
         return sucsess ;
     }
-    @RequestMapping("/api/stopIndexing")
-    @ResponseBody
-    public String stopIndexing(){
-        if(!SiteMapper.isWork()){
-            return "{\n" +
-                    "'result': false,\n" +
-                    "'error': \"Индексация не запущена\"\n" +
-                    "            }";
-
-        }
-        SiteMapper.stop();
-            return "{\n" +
-                    "\t'result': true\n" +
-                    "}\n";
-    }
+//    @RequestMapping("/api/stopIndexing")
+//    @ResponseBody
+//    public String stopIndexing(){
+//        if(!SiteMapper.isWork()){
+//            return "{\n" +
+//                    "'result': false,\n" +
+//                    "'error': \"Индексация не запущена\"\n" +
+//                    "            }";
+//
+//        }
+//
+//            return "{\n" +
+//                    "\t'result': true\n" +
+//                    "}\n";
+//    }
     @RequestMapping("/api/indexpage")
     @ResponseBody
     public String indexingPage(@RequestParam String url){

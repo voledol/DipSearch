@@ -14,39 +14,34 @@ import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
 
-class SiteMapper extends RecursiveTask<Set<Nodelink>> {
+class SiteMapper extends RecursiveTask<Set<Nodelink>>{
     private final Nodelink parent;
     private static Set<Nodelink> links = ConcurrentHashMap.newKeySet();
     private static String SITE_URL;
-    public static boolean status;
 
 
 
 
     public SiteMapper(Nodelink parent) {
-        long i = System.currentTimeMillis();
         this.parent = parent;
     }
+
+
 
     @Override
     protected Set<Nodelink> compute() {
 
         links.add(parent);
         ColumCreator.createColum(parent);
-        Indexation.indexPage(parent.getUrl());
-        Set<SiteMapper> taskList = new HashSet<>();
             Set<Nodelink> childrenLinks = this.getChildrenLinks(parent);
-        if(status){
+        Set<SiteMapper> taskList = new HashSet<>();
             for (Nodelink child : childrenLinks) {
-                taskList.add((SiteMapper) new SiteMapper(child).fork());
+                taskList.add(new SiteMapper(child));
             }
             for (SiteMapper task : taskList) {
+
                 links.addAll(task.join());
             }
-        }
-        else{
-            taskList.clear();
-        }
 
         return links;
     }
@@ -81,11 +76,4 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>> {
         return parent.getSubLinks();
     }
 
-    public static  boolean isWork() {
-        return status;
-    }
-
-    public static void stop() {
-        status = false;
-    }
 }

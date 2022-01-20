@@ -115,7 +115,7 @@ public class  DBConnection {
     }
     public static void updateStatus(String URL) {
         Date status_time = new Date();
-        String sql = "Update site set status_time = "+ status_time.toString() +" where url ='" + URL + "';";
+        String sql = "Update site set status_time = "+ status_time.toString() +" where url ='" + URL + "/';";
         try {
             DBConnection.getConnection().createStatement().execute(sql);
         } catch (SQLException e) {

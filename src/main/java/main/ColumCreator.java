@@ -43,7 +43,7 @@ public class ColumCreator {
                     page.setCode(response.statusCode());
                     page.setSite_id(DBConnection.getSiteId(urlfin));
                     DBConnection.insertPage(page);
-                    DBConnection.updateStatus(urlfin);
+//                    DBConnection.updateStatus(urlfin);
                }
                catch (IOException | SQLException e) {
                     e.printStackTrace();
@@ -62,5 +62,26 @@ public class ColumCreator {
           }
           return title;
 
+     }
+     public static void createColum2(String url2){
+          String url = url2;
+          ColumCreator.connect(url);
+          try {
+               String[] url1 = url2.split("/");
+               String urlfin = url1[0] + "//"+ url1[1] + url1[2];
+
+               Document doc = response.parse();
+               Elements content = doc.select("html");
+               Page page = new Page();
+               page.setPath(url2.replaceAll(urlfin,""));
+               page.setContent(content.text().replaceAll("'",""));
+               page.setCode(response.statusCode());
+               page.setSite_id(DBConnection.getSiteId(urlfin));
+               DBConnection.insertPage(page);
+//                    DBConnection.updateStatus(urlfin);
+          }
+          catch (IOException | SQLException e) {
+               e.printStackTrace();
+          }
      }
 }
