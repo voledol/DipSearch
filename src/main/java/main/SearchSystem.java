@@ -14,14 +14,14 @@ public class SearchSystem {
     public String searchRequest;
     private SearchSystemRequests requests = new SearchSystemRequests();
     private PageCRUD pageDB = new PageCRUD();
-    private LemMaker lemMaker = new LemMaker();
+    private LemCreator lemCreator = new LemCreator();
 
     public  List<ResultPage> find(String searchRequest){
         List<ResultPage> results = new ArrayList<>();
         HashMap<String, Integer> lemsWFR = new HashMap<>();
         List<Lemma> lems = new ArrayList<>();
         try {
-             lemsWFR = lemMaker.getLem(searchRequest);
+             lemsWFR = lemCreator.getLem(searchRequest);
             lems = requests.findLemmaList(lemsWFR);
         } catch (IOException e) {
             e.printStackTrace();

@@ -7,7 +7,6 @@ import connections.sites.SiteConnect;
 import model.Index;
 import model.Lemma;
 import model.Page;
-import org.jsoup.Connection;
 
 import java.io.IOException;
 import java.util.*;
@@ -17,7 +16,7 @@ public class Indexation {
     private LemmaCRUD lemmaDB = new LemmaCRUD();
     private IndexListCRUD indexListCRUD = new IndexListCRUD();
     private SiteConnect connectSite = new SiteConnect();
-    private LemMaker lemMaker = new LemMaker();
+    private LemCreator lemCreator = new LemCreator();
     public synchronized  void indexPage(String  pageUrl) {
         connectSite.getConnection(pageUrl);
         HashMap<String, Integer> titleLemm = new HashMap<>();
@@ -25,8 +24,8 @@ public class Indexation {
         Page page = (Page) pageDB.read("url", pageUrl);
         try {
                 String indexPage =pageUrl;
-                titleLemm = lemMaker.getLem((connectSite.getContent("title")).toString());
-                bodyLemm = lemMaker.getLem(connectSite.getContent("body").toString());
+                titleLemm = lemCreator.getLem((connectSite.getContent("title")).toString());
+                bodyLemm = lemCreator.getLem(connectSite.getContent("body").toString());
                 HashMap<String, Float> rank = calculateLemmaRank(titleLemm, bodyLemm);
                 for (Map.Entry<String, Integer> entry : titleLemm.entrySet()) {
                     if (bodyLemm.containsKey(entry.getKey())) {

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LemMaker {
+public class LemCreator {
     public  HashMap<String, Integer> lemmas = new HashMap<>();
     public  String[] partsOfSpeech = {"СОЮЗ","МЕЖД","ПРЕДЛ","ЧАСТ"};
 
