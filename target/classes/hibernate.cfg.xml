@@ -1,5 +1,5 @@
 <!DOCTYPE hibernate-configuration PUBLIC
-        "-//main.Hibernate/main.Hibernate Configuration DTD 3.0//EN"
+        "-//main.HibernateController/main.HibernateController Configuration DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
@@ -8,7 +8,6 @@
         <property name="connection.url">jdbc:mysql://127.0.0.1:3306/search_engine?useSSL=false&amp;serverTimezone=UTC</property>
         <property name="connection.username">valgall</property>
         <property name="connection.password">Gorila123</property>
-<!--        <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>-->
         <!-- JDBC connection pool settings ... using built-in test pool -->
         <property name="connection.pool_size">20</property>
         <!-- Select our SQL dialect -->
@@ -24,5 +23,6 @@
         <mapping class="model.Field"></mapping>
         <mapping class="model.Index"></mapping>
         <mapping class="model.Lemma"></mapping>
+        <mapping class="model.Site"></mapping>
     </session-factory>
 </hibernate-configuration>

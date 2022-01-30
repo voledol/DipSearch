@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 public class LemMaker {
-    public static HashMap<String, Integer> lemmas = new HashMap<>();
-    public static String[] partsOfSpeech = {"СОЮЗ","МЕЖД","ПРЕДЛ","ЧАСТ"};
+    public  HashMap<String, Integer> lemmas = new HashMap<>();
+    public  String[] partsOfSpeech = {"СОЮЗ","МЕЖД","ПРЕДЛ","ЧАСТ"};
 
 
-    public static HashMap<String, Integer> getLem(String text) throws IOException {
+    public  HashMap<String, Integer> getLem(String text) throws IOException {
         LuceneMorphology luceneMorph =
                 new RussianLuceneMorphology();
         List<List<String>> lem  = new ArrayList<>();
@@ -46,7 +46,7 @@ public class LemMaker {
         }
         return lemmas;
     }
-    public static boolean isWord(String text){
+    public  boolean isWord(String text){
         boolean isWord  = true;
         for (int i = 0; i < partsOfSpeech.length; i ++){
             if (text.contains(partsOfSpeech[i])){
@@ -55,7 +55,7 @@ public class LemMaker {
         }
         return isWord;
     }
-    public static void putWord(String text){
+    public void putWord(String text){
         if (lemmas.containsKey(text)){
             lemmas.put(text, lemmas.get(text) + 1);
         }
@@ -64,11 +64,5 @@ public class LemMaker {
         }
 
 
-    }
-    public static void print(){
-        for (Map.Entry entry: lemmas.entrySet()) {
-
-            System.out.println(entry);
-        }
     }
 }

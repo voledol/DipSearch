@@ -1,10 +1,13 @@
 package model;
 
+import connections.sites.SiteConnect;
+
 public class ResultPage {
     String url;
     String title;
     String snippet;
     float relevance;
+    private SiteConnect siteConnect = new SiteConnect();
 
 
     public String getUrl() {
@@ -19,8 +22,9 @@ public class ResultPage {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTitle() {
+        siteConnect.getConnection(url);
+        this.title = siteConnect.getContent("title").toString();
     }
 
     public String getSnippet() {

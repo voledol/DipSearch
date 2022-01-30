@@ -1,13 +1,13 @@
 package main;
 
-import org.jsoup.Jsoup;
+import connections.dataBase.PageCRUD;
+import connections.sites.SiteConnect;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.Collectors;
@@ -18,6 +18,8 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>>{
     private final Nodelink parent;
     private static Set<Nodelink> links = ConcurrentHashMap.newKeySet();
     private static String SITE_URL;
+    public PageCreator pageCreator = new PageCreator(new PageCRUD());
+    private SiteConnect connect  = new SiteConnect();
 
 
 
@@ -32,8 +34,8 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>>{
     protected Set<Nodelink> compute() {
 
         links.add(parent);
-        ColumCreator.createColum(parent);
-            Set<Nodelink> childrenLinks = this.getChildrenLinks(parent);
+        pageCreator.createPage(parent.getUrl());
+        Set<Nodelink> childrenLinks = this.getChildrenLinks(getPageContent(parent));
         Set<SiteMapper> taskList = new HashSet<>();
             for (Nodelink child : childrenLinks) {
                 taskList.add(new SiteMapper(child));
@@ -42,21 +44,15 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>>{
 
                 links.addAll(task.join());
             }
-
         return links;
     }
 
-    private Set<Nodelink> getChildrenLinks(Nodelink parent) {
+    private Set<Nodelink> getChildrenLinks(Document document) {
         try {
             String[] url1 = parent.getUrl().split("/");
-            String urlfin = url1[0] + "//"+ url1[1] + url1[2];
-            SITE_URL = urlfin;
-            Document doc = Jsoup.connect(parent.getUrl())
-                    .maxBodySize(0)
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0")
-                    .ignoreHttpErrors(true)
-                    .timeout(5000).get();
-            Elements links = doc.select("a[href]");
+            String urlFin = url1[0] + "//"+ url1[1] + url1[2];
+            SITE_URL = urlFin;
+            Elements links = document.select("a[href]");
             Set<String> absUrls = links.stream().map(el -> el.attr("abs:href"))
                     .filter(u -> !u.equals(parent.getUrl()))
                     .filter(y -> y.startsWith(SITE_URL))
@@ -70,10 +66,15 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>>{
                 }
             }
             sleep(250);
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return parent.getSubLinks();
+    }
+    public Document getPageContent(Nodelink node){
+        connect.getConnection(node.getUrl());
+        Document doc = connect.getContent("html");
+        return doc;
     }
 
 }

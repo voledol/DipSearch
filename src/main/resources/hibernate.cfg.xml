@@ -1,5 +1,5 @@
 <!DOCTYPE hibernate-configuration PUBLIC
-        "-//main.Hibernate/main.Hibernate Configuration DTD 3.0//EN"
+        "-//main.HibernateController/main.HibernateController Configuration DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
@@ -23,5 +23,6 @@
         <mapping class="model.Field"></mapping>
         <mapping class="model.Index"></mapping>
         <mapping class="model.Lemma"></mapping>
+        <mapping class="model.Site"></mapping>
     </session-factory>
 </hibernate-configuration>

@@ -1,7 +1,10 @@
 package main;
 
+import connections.dataBase.PageCRUD;
+import connections.dataBase.SearchSystemRequests;
 import model.Index;
 import model.Lemma;
+import model.Page;
 import model.ResultPage;
 
 import java.io.IOException;
@@ -9,28 +12,33 @@ import java.util.*;
 
 public class SearchSystem {
     public String searchRequest;
+    private SearchSystemRequests requests = new SearchSystemRequests();
+    private PageCRUD pageDB = new PageCRUD();
+    private LemMaker lemMaker = new LemMaker();
 
-
-    public static List<ResultPage> find(String searchRequest){
+    public  List<ResultPage> find(String searchRequest){
         List<ResultPage> results = new ArrayList<>();
         HashMap<String, Integer> lemsWFR = new HashMap<>();
         List<Lemma> lems = new ArrayList<>();
         try {
-             lemsWFR = LemMaker.getLem(searchRequest);
-            lems = Hibernate.findLemmaList(lemsWFR);
+             lemsWFR = lemMaker.getLem(searchRequest);
+            lems = requests.findLemmaList(lemsWFR);
         } catch (IOException e) {
             e.printStackTrace();
         }
         Collections.sort(lems);
-        List<Index> ind = Hibernate.findPageList(lems.get(0));
+        List<Index> ind = requests.findIndexList("lemma_Id",String.valueOf(lems.get(0).getId()));
         for(int i =1; i < lems.size();i++){
-            ind = Hibernate.removePages(lems.get(i), ind);
+            ind = removePages(lems.get(i), ind);
         }
 
         for (Index index: ind){
-            ResultPage page = DBConnection.getPage(index.getPage_id());
-            page.setRelevance(SearchSystem.relevance(index.getPage_id(), lems));
-            results.add(page);
+            Page page = (Page) pageDB.read("id", String.valueOf(index.getPage_id()));
+            ResultPage resultPage = new ResultPage();
+            resultPage.setUrl(page.getPath());
+            resultPage.setTitle();
+            resultPage.setRelevance(relevance(index.getPage_id(), lems));
+            results.add(resultPage);
         }
         for(ResultPage page: results){
             System.out.println(page.getUrl());
@@ -42,12 +50,28 @@ public class SearchSystem {
         }
         return results;
     }
-    public static float relevance(int page_id, List<Lemma> lems){
+    public  float relevance(int page_id, List<Lemma> lems){
         float rank = 0;
         for(Lemma lemma: lems){
-            rank += DBConnection.getRank(page_id,lemma.getId());
+            Index index = requests.findIndexList(String.valueOf(page_id), String.valueOf(lemma.getId())).get(0);
+            rank += index.rank;
         }
         return rank;
+    }
+    public  List<Index> removePages(Lemma lem, List<Index> ind){
+        List<Index> finPages = new ArrayList<>();
+        for(Index index: ind){
+            List<Index> pagesId = requests.findIndexList("page_id", String.valueOf(index.getPage_id()));
+            for(Index page: pagesId){
+                if(page.getLemma_id()!= lem.getId()){
+                    continue;
+                }
+                else{
+                    finPages.add(page);
+                }
+            }
+        }
+        return finPages;
 
     }
 }
