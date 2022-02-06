@@ -29,7 +29,7 @@ public class LemmaController implements DBRepository<Lemma> {
     }
 
     @Override
-    public Lemma get(String criteria1, String criteria2) {
+    public Lemma get(String criteria1, String criteria2) throws NullPointerException {
         CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
         CriteriaQuery<Lemma> query = builder.createQuery(Lemma.class);
         Root<Lemma> root = query.from(Lemma.class);
