@@ -1,23 +1,18 @@
 package main;
 
-import connections.dataBase.PageCRUD;
-import connections.dataBase.SiteCRUD;
+import connections.dataBase.PageController;
+import connections.dataBase.SiteController;
 import connections.sites.SiteConnect;
 import model.Page;
 import model.Site;
 import org.jsoup.nodes.Document;
 
-import java.sql.SQLException;
+
 
 public class PageCreator {
-     public SiteConnect connect = new SiteConnect();
-     private PageCRUD pageDB = new PageCRUD();
-     private SiteCRUD siteDB = new SiteCRUD();
-
-
-    public PageCreator(PageCRUD pageDB) {
-        this.pageDB = pageDB;
-    }
+     public static SiteConnect connect = new SiteConnect();
+     public static PageController pageDB = new PageController();
+     public static SiteController siteDB = new SiteController();
 
     public  Page createPage(String url){
          Page page = new Page();
@@ -28,9 +23,9 @@ public class PageCreator {
                     page.setPath(url.replaceAll(urlFin,""));
                     page.setContent(content.text().replaceAll("'",""));
                     page.setCode(connect.response.statusCode());
-                    Site site = (Site) siteDB.read("url",urlFin);
+                    Site site = (Site) siteDB.get("url",urlFin);
                     page.setSite_id(site.getId());
-                    pageDB.create(page);
+                    pageDB.add(page);
                return page;
-     }
+    }
 }

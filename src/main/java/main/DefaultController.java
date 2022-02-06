@@ -2,7 +2,6 @@ package main;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
@@ -10,7 +9,7 @@ import java.util.concurrent.*;
 
 @Controller
 public class DefaultController {
-    public Indexation indexing = new Indexation();
+//    public Indexation indexing = new Indexation();
     PropertyLoader.Site[] sites = Main.propertyes.getAvalibleSites().getAvailableSites();
     @RequestMapping("/")
     public String index() {
@@ -36,21 +35,21 @@ public class DefaultController {
 ////        }
         return  ans.toString() ;
     }
-    @RequestMapping("/api/indexpage")
-    @ResponseBody
-    public String indexingPage(@RequestParam String url){
-        JSONObject ans = new JSONObject();
-        if(Arrays.asList(sites).contains(url)){
-            indexing.indexPage(url);
-            ans.put("result","true");
-
-        }
-        else {
-            ans.put("result","false");
-            ans.put("error", "Данная страница находится за пределами сайтов, указанных в конфигурационном файле");
-        }
-        return ans.toString();
-    }
+//    @RequestMapping("/api/indexpage")
+//    @ResponseBody
+//    public String indexingPage(@RequestParam String url){
+//        JSONObject ans = new JSONObject();
+//        if(Arrays.asList(sites).contains(url)){
+//            indexing.indexPage(url);
+//            ans.put("result","true");
+//
+//        }
+//        else {
+//            ans.put("result","false");
+//            ans.put("error", "Данная страница находится за пределами сайтов, указанных в конфигурационном файле");
+//        }
+//        return ans.toString();
+//    }
     @RequestMapping("/api/statistics")
     @ResponseBody
     public String statistic(){

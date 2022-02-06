@@ -1,19 +1,16 @@
 package main;
 
-import connections.dataBase.PageCRUD;
-import connections.dataBase.SearchSystemRequests;
-import model.Index;
-import model.Lemma;
-import model.Page;
-import model.ResultPage;
 
+import connections.dataBase.PageController;
+import connections.dataBase.SiteController;
+import model.*;
 import java.io.IOException;
 import java.util.*;
 
 public class SearchSystem {
     public String searchRequest;
-    private SearchSystemRequests requests = new SearchSystemRequests();
-    private PageCRUD pageDB = new PageCRUD();
+    private SiteController requests = new SiteController();
+    private PageController pageDB = new PageController();
     private LemCreator lemCreator = new LemCreator();
 
     public  List<ResultPage> find(String searchRequest){
@@ -33,7 +30,7 @@ public class SearchSystem {
         }
 
         for (Index index: ind){
-            Page page = (Page) pageDB.read("id", String.valueOf(index.getPage_id()));
+            Page page = pageDB.get("id", String.valueOf(index.getPage_id()));
             ResultPage resultPage = new ResultPage();
             resultPage.setUrl(page.getPath());
             resultPage.setTitle();

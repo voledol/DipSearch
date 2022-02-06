@@ -1,58 +1,55 @@
 package main;
 
-import connections.dataBase.PageCRUD;
-import connections.sites.SiteConnect;
+import model.Page;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
 
-class SiteMapper extends RecursiveTask<Set<Nodelink>>{
+class SiteMapper extends RecursiveTask<Set<Nodelink>> {
     private final Nodelink parent;
-    private static Set<Nodelink> links = ConcurrentHashMap.newKeySet();
-    private static String SITE_URL;
-    public PageCreator pageCreator = new PageCreator(new PageCRUD());
-    private SiteConnect connect  = new SiteConnect();
-
-
+    private  Set<Nodelink> links = ConcurrentHashMap.newKeySet();
+    private   String SITE_URL;
+    public PageCreator pageCreator = new PageCreator();
+    public Indexation idex = new Indexation();
 
 
     public SiteMapper(Nodelink parent) {
         this.parent = parent;
+        this.SITE_URL = parent.getUrl();
     }
-
 
 
     @Override
-    protected Set<Nodelink> compute() {
-
+    public Set<Nodelink> compute() {
         links.add(parent);
+        Set<Nodelink> childrenLinks = this.getChildrenLinks(parent);
         pageCreator.createPage(parent.getUrl());
-        Set<Nodelink> childrenLinks = this.getChildrenLinks(getPageContent(parent));
+        idex.indexPage(parent.getUrl());// остановился вот тут. демай дальше. надо в первый раз не брать url сайта
         Set<SiteMapper> taskList = new HashSet<>();
-            for (Nodelink child : childrenLinks) {
-                taskList.add(new SiteMapper(child));
-            }
-            for (SiteMapper task : taskList) {
-
-                links.addAll(task.join());
-            }
+        for (Nodelink child : childrenLinks) {
+            taskList.add((SiteMapper) new SiteMapper(child).fork());
+        }
+        for (SiteMapper task : taskList) {
+            links.addAll(task.join());
+        }
         return links;
     }
 
-    private Set<Nodelink> getChildrenLinks(Document document) {
+    private Set<Nodelink> getChildrenLinks(Nodelink parent) {
         try {
-            String[] url1 = parent.getUrl().split("/");
-            String urlFin = url1[0] + "//"+ url1[1] + url1[2];
-            SITE_URL = urlFin;
-            Elements links = document.select("a[href]");
+            String url = SITE_URL;
+            Document doc = getPageContent(parent);
+            Elements links = doc.select("a[href]");
             Set<String> absUrls = links.stream().map(el -> el.attr("abs:href"))
                     .filter(u -> !u.equals(parent.getUrl()))
                     .filter(y -> y.startsWith(SITE_URL))
@@ -61,7 +58,8 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>>{
                     .collect(Collectors.toSet());
             for (String link : absUrls) {
                 Nodelink node = new Nodelink(link, parent);
-                if (!SiteMapper.links.contains(node)){
+                if (!links.contains(node)){
+
                     parent.addSubLink(node);
                 }
             }
@@ -69,12 +67,14 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>>{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         return parent.getSubLinks();
     }
     public Document getPageContent(Nodelink node){
-        connect.getConnection(node.getUrl());
-        Document doc = connect.getContent("html");
+        Main.connect.getConnection(node.getUrl());
+        Document doc = Main.connect.getContent(node.getUrl());
         return doc;
     }
 
 }
+

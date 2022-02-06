@@ -2,7 +2,8 @@ package main;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import connections.dataBase.SiteCRUD;
+//import connections.dataBase.SiteCRUD;
+import connections.sites.SiteConnect;
 import model.Site;
 import model.SiteStatus;
 import org.hibernate.Session;
@@ -17,8 +18,9 @@ import java.io.IOException;
 public class Main {
     public static PropertyLoader propertyes = new PropertyLoader();
     public static HibernateController hibernateController = new HibernateController();
-    public static SiteCRUD siteCRUD = new SiteCRUD();
+//    public static SiteCRUD siteCRUD = new SiteCRUD();
     public static Session sessionHibernate;
+    public static SiteConnect connect = new SiteConnect();
     public static void main(String[] args){
         sessionHibernate = hibernateController.getSessionFactory().openSession();
        propertyes = aplicationReader();
@@ -32,13 +34,13 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for(PropertyLoader.Site st: propertyes.getAvalibleSites().getAvailableSites()){
-            Site site = new Site();
-            site.setUrl(st.getUrl());
-            site.setName(st.getName());
-            site.setStatus(SiteStatus.FAILED);
-            siteCRUD.create(site);
-        }
+//        for(PropertyLoader.Site st: propertyes.getAvalibleSites().getAvailableSites()){
+//            Site site = new Site();
+//            site.setUrl(st.getUrl());
+//            site.setName(st.getName());
+//            site.setStatus(SiteStatus.FAILED);
+//            siteCRUD.create(site);
+//        }
         return propertyes;
     }
 }

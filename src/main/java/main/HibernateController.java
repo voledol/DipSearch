@@ -23,7 +23,7 @@ public class HibernateController {
     public  Metadata metadata = new MetadataSources(registry).getMetadataBuilder().build();
     public  SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
     public  Session session = sessionFactory.openSession();
-    public  SessionFactory getSessionFactory(){///// подумай как тут сделать
+    public  SessionFactory getSessionFactory(){
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration().configure();

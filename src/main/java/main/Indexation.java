@@ -1,27 +1,26 @@
 package main;
 
-import connections.dataBase.IndexListCRUD;
-import connections.dataBase.LemmaCRUD;
-import connections.dataBase.PageCRUD;
+import connections.dataBase.IndexController;
+import connections.dataBase.LemmaController;
+import connections.dataBase.PageController;
 import connections.sites.SiteConnect;
 import model.Index;
 import model.Lemma;
 import model.Page;
-
 import java.io.IOException;
 import java.util.*;
 
 public class Indexation {
-    private PageCRUD pageDB = new PageCRUD();
-    private LemmaCRUD lemmaDB = new LemmaCRUD();
-    private IndexListCRUD indexListCRUD = new IndexListCRUD();
+    private PageController pageDB = new PageController();
+    private LemmaController lemmaDB = new LemmaController();
+    private IndexController indexListCRUD = new IndexController();
     private SiteConnect connectSite = new SiteConnect();
     private LemCreator lemCreator = new LemCreator();
-    public synchronized  void indexPage(String  pageUrl) {
+    public void indexPage(String  pageUrl) {
         connectSite.getConnection(pageUrl);
         HashMap<String, Integer> titleLemm = new HashMap<>();
         HashMap<String, Integer> bodyLemm = new HashMap<>();
-        Page page = (Page) pageDB.read("url", pageUrl);
+        Page page = (Page) pageDB.get("path", pageUrl);
         try {
                 String indexPage =pageUrl;
                 titleLemm = lemCreator.getLem((connectSite.getContent("title")).toString());
@@ -37,7 +36,7 @@ public class Indexation {
                     Lemma lemma = new Lemma();
                     lemma.setSite_id(page.getSite_id());
                     index.setPage_id(page.getId());
-                    lemma = (Lemma) lemmaDB.read("lemma", entry.getKey());
+                    lemma = (Lemma) lemmaDB.get("lemma", entry.getKey());
                     if (lemma != null) {
                         lemma.setFrequency(lemma.getFrequency() + entry.getValue());
                         lemmaDB.update(lemma);
@@ -45,11 +44,11 @@ public class Indexation {
                     } else {
                         lemma.setLemma(entry.getKey());
                         lemma.setFrequency(1);
-                        lemmaDB.create(lemma);
-                        index.setLemma_id(((Lemma)lemmaDB.read("lemma", entry.getKey())).getId());
+                        lemmaDB.add(lemma);
+                        index.setLemma_id(((Lemma)lemmaDB.get("lemma", entry.getKey())).getId());
                     }
                     index.setRank(rank.get(entry.getKey()));
-                    indexListCRUD.create(index);
+                    indexListCRUD.add(index);
                 }
                 titleLemm.clear();
                 bodyLemm.clear();
