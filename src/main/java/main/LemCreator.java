@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class LemCreator {
     public  HashMap<String, Integer> lemmas = new HashMap<>();
+
     public  String[] partsOfSpeech = {"СОЮЗ","МЕЖД","ПРЕДЛ","ЧАСТ"};
 
 
