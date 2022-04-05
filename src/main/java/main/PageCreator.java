@@ -13,6 +13,7 @@ public class PageCreator {
      public static SiteConnect connect = new SiteConnect();
      public static PageController pageDB = new PageController();
      public static SiteController siteDB = new SiteController();
+     public static int pageCount = 0;
 
     public  Page createPage(String url){
          Page page = new Page();
@@ -26,6 +27,10 @@ public class PageCreator {
                     Site site = (Site) siteDB.get("url",urlFin);
                     page.setSite_id(site.getId());
                     pageDB.add(page);
+                    pageCount++;
                return page;
+    }
+    public static int getPageCount(){
+        return pageCount;
     }
 }

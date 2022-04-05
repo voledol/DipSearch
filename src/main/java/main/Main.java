@@ -21,6 +21,7 @@ public class Main {
 //    public static SiteCRUD siteCRUD = new SiteCRUD();
     public static Session sessionHibernate;
     public static SiteConnect connect = new SiteConnect();
+    public static int sitesCount = 0;
     public static void main(String[] args){
         sessionHibernate = hibernateController.getSessionFactory().openSession();
        propertyes = aplicationReader();
@@ -40,6 +41,7 @@ public class Main {
 //            site.setName(st.getName());
 //            site.setStatus(SiteStatus.FAILED);
 //            siteCRUD.create(site);
+//            sitesCount++;
 //        }
         return propertyes;
     }

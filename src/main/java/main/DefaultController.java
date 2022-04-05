@@ -9,7 +9,8 @@ import java.util.concurrent.*;
 
 @Controller
 public class DefaultController {
-//    public Indexation indexing = new Indexation();
+    public Indexation indexing = new Indexation();
+    public static boolean indexation = false;
     PropertyLoader.Site[] sites = Main.propertyes.getAvalibleSites().getAvailableSites();
     @RequestMapping("/")
     public String index() {
@@ -28,43 +29,39 @@ public class DefaultController {
 //        else{
             ans.put("result", "true");
             Set<Nodelink> pool1 = new ForkJoinPool().invoke(new SiteMapper(new Nodelink(sites[1].getUrl())));
-//            ForkJoinPool pool1 = new ForkJoinPool(2, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false);
+            indexation = true;
+    //            ForkJoinPool pool1 = new ForkJoinPool(2, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false);
 //            ForkJoinPool pool2 = new ForkJoinPool(2, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false);
 //            pool1.invoke(new SiteMapper(new Nodelink(sites[1].getUrl())));
 ////            pool2.invoke(new SiteMapper(new Nodelink(sites[2].getUrl())));
 ////        }
         return  ans.toString() ;
     }
-//    @RequestMapping("/api/indexpage")
-//    @ResponseBody
-//    public String indexingPage(@RequestParam String url){
-//        JSONObject ans = new JSONObject();
-//        if(Arrays.asList(sites).contains(url)){
-//            indexing.indexPage(url);
-//            ans.put("result","true");
-//
-//        }
-//        else {
-//            ans.put("result","false");
-//            ans.put("error", "Данная страница находится за пределами сайтов, указанных в конфигурационном файле");
-//        }
-//        return ans.toString();
-//    }
+    @RequestMapping("/api/indexpage")
+    @ResponseBody
+    public String indexingPage( String url){
+        JSONObject ans = new JSONObject();
+        String[] urlSplit = url.split("/");
+        String urlFin = urlSplit[0] + "//"+ urlSplit[1] + urlSplit[2];
+        if(Arrays.asList(sites).contains(urlFin)){
+            indexing.indexPage(url);
+            ans.put("result","true");
+
+        }
+        else {
+            ans.put("result","false");
+            ans.put("error", "Данная страница находится за пределами сайтов, указанных в конфигурационном файле");
+        }
+        return ans.toString();
+    }
     @RequestMapping("/api/statistics")
     @ResponseBody
     public String statistic(){
+        DBstatistics stat = new DBstatistics();
         JSONObject ans = new JSONObject();
         ans.put("result","true");
-//        ans.put("total" , DBConnect.statistic());
-//        ans.put("detailed", DBConnect.detailedStatistic());
-        return ans.toString();
-    }
-    @RequestMapping("/api/test")
-    @ResponseBody
-    public String testSiteArray(){
-        JSONObject ans = new JSONObject();
-//        AvailableSites av = new AvailableSites();
-
+        ans.put("total" , stat.statistic());
+        ans.put("detailed", stat.detailedStatistic());
         return ans.toString();
     }
 

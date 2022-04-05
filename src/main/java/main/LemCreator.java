@@ -14,12 +14,11 @@ public class LemCreator {
     public  String[] partsOfSpeech = {"СОЮЗ","МЕЖД","ПРЕДЛ","ЧАСТ"};
 
 
+
     public  HashMap<String, Integer> getLem(String text) throws IOException {
         LuceneMorphology luceneMorph =
                 new RussianLuceneMorphology();
         List<List<String>> lem  = new ArrayList<>();
-
-
         String[] words = text.toLowerCase()
                 .replaceAll("[A-z]", "")
                 .replaceAll("[^\\p{L}\\p{Z}]+", "").replaceAll("[^А-я,\\s]", "")
@@ -27,7 +26,8 @@ public class LemCreator {
         for (String word : words){
          if(word.isEmpty()){
              continue;
-         }else {lem.add(luceneMorph.getNormalForms(word));}
+         }else {lem.add(luceneMorph.getNormalForms(word));
+         }
 
         }
         for(List<String> lemma: lem){
@@ -44,6 +44,7 @@ public class LemCreator {
                 }
             }
         }
+
         return lemmas;
     }
     public  boolean isWord(String text){

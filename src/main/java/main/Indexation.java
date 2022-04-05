@@ -16,6 +16,7 @@ public class Indexation {
     private IndexController indexListCRUD = new IndexController();
     private SiteConnect connectSite = new SiteConnect();
     private LemCreator lemCreator = new LemCreator();
+    public static int lemmCount = 0;
     public void indexPage(String  pageUrl) {
         connectSite.getConnection(pageUrl);
         HashMap<String, Integer> titleLemm = new HashMap<>();
@@ -45,6 +46,7 @@ public class Indexation {
                         lemma.setLemma(entry.getKey());
                         lemma.setFrequency(1);
                         lemmaDB.add(lemma);
+                        lemmCount++;
                         index.setLemma_id(((Lemma)lemmaDB.get("lemma", entry.getKey())).getId());
                     }
                     index.setRank(rank.get(entry.getKey()));
