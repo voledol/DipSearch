@@ -2,6 +2,7 @@ package main;
 
 
 import connections.dataBase.PageController;
+import connections.dataBase.SearchRequestHandler;
 import connections.dataBase.SiteController;
 import model.*;
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.util.*;
 
 public class SearchSystem {
     public String searchRequest;
-    private SiteController requests = new SiteController();
+    private SearchRequestHandler requests = new SearchRequestHandler();
     private PageController pageDB = new PageController();
     private LemCreator lemCreator = new LemCreator();
 

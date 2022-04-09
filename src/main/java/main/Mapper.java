@@ -5,24 +5,31 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
-
+/**Класс маппер сайта
+ * @autor VG
+ * @version 0.1
+ * **/
 class SiteMapper extends RecursiveTask<Set<Nodelink>> {
+    /**Поле Узловой ссылки*/
     private final Nodelink parent;
+    /** Поле список Узловых ссылок*/
     private  Set<Nodelink> links = ConcurrentHashMap.newKeySet();
+    /** Поле адрес сайта*/
     private   String SITE_URL;
+    /** Поле создания PageCreator {@link PageCreator}*/
     public PageCreator pageCreator = new PageCreator();
+    /**Поле создания класса Indexation {@link Indexation}*/
     public Indexation idex = new Indexation();
-
-
+    /**Конструктор класса SiteMapper
+     * @parem parent - родительская ссылка
+     * @see Nodelink*/
     public SiteMapper(Nodelink parent) {
         this.parent = parent;
         this.SITE_URL = parent.getUrl();
@@ -30,11 +37,13 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>> {
 
 
     @Override
+    /**Функция Fork Join Pool обработка полученыых ссылок и получения следующих
+     * @return возвращает список всех доступных ссылок на сайте */
     public Set<Nodelink> compute() {
         links.add(parent);
         Set<Nodelink> childrenLinks = this.getChildrenLinks(parent);
         pageCreator.createPage(parent.getUrl());
-        idex.indexPage(parent.getUrl());// остановился вот тут. демай дальше. надо в первый раз не брать url сайта
+        idex.indexPage(parent.getUrl());// остановился вот тут. думай дальше. надо в первый раз не брать url сайта
         Set<SiteMapper> taskList = new HashSet<>();
         for (Nodelink child : childrenLinks) {
             taskList.add((SiteMapper) new SiteMapper(child).fork());
@@ -44,7 +53,10 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>> {
         }
         return links;
     }
-
+    /**Функция получения ссылок с одной странице
+     * @param  parent -  ссылка на страницу с которой необззодимо получить ссылки
+     *@return возвращает список доступных на старнице ссылок
+     * выводит в консоль InterruptedException*/
     private Set<Nodelink> getChildrenLinks(Nodelink parent) {
         try {
             String url = SITE_URL;
@@ -70,6 +82,8 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>> {
 
         return parent.getSubLinks();
     }
+    /**Функция получения контента страницы в тектовом фале
+     * @param node - узловая ссылка */
     public Document getPageContent(Nodelink node){
         Main.connect.getConnection(node.getUrl());
         Document doc = Main.connect.getContent(node.getUrl());

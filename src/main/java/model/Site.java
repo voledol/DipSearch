@@ -2,18 +2,28 @@ package model;
 
 import javax.persistence.*;
 import java.sql.Date;
+/**Класс описывающий сущность Site
+ * @autor VG
+ * @version 0.1
+ * **/
 @Entity
 @Table(name = "site")
 public class Site {
+    /**Поле id*/
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
+    /**Поле статуса сайта*/
     private SiteStatus status;
+    /**Поле времени последнего обновления статуса сайта*/
     private Date status_time;
+    /**Поле последняя ошибка индексации*/
     private String last_error;
+    /**Поле адрес сайта*/
     private String url;
+    /**Поле имя сайта*/
     private String name;
-
+    /**Getters and setters*/
     public int getId() {return id;}
     public void setId(int id) {this.id = id;}
     public SiteStatus getStatus() {return status;}

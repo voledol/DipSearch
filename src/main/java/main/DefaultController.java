@@ -1,4 +1,6 @@
 package main;
+import com.mysql.cj.xdevapi.JsonArray;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,7 +63,12 @@ public class DefaultController {
         JSONObject ans = new JSONObject();
         ans.put("result","true");
         ans.put("total" , stat.statistic());
-        ans.put("detailed", stat.detailedStatistic());
+        JSONArray siteLikeAr = new JSONArray();
+
+        for(int i = 0; i < sites.length-1; i++){
+         siteLikeAr.put(stat.detailedStatistic(sites[i]));
+        }
+        ans.put("detailed", siteLikeAr);
         return ans.toString();
     }
 

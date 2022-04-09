@@ -2,20 +2,25 @@ package main;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import model.Page;
 
 import javax.persistence.Entity;
-
+/**Класс получения свойст из файла application.yml
+ * @autor VG
+ * @version 0.1
+ * **/
 public class PropertyLoader{
 
 
+    /**Поле настроек SpringBoot {@link Spring}*/
     private Spring spring;
+    /** Поле AAvailableSites {@link AvailableSites}*/
     @JsonProperty("available-sites")
     private AvailableSites avalibleSites;
-
+    /**Getters and setters*/
     public Spring getSpring() {
         return spring;
     }
-
     public void setSpring(Spring spring) {
         this.spring = spring;
     }
@@ -27,11 +32,13 @@ public class PropertyLoader{
     public void setAvalibleSites(AvailableSites avalibleSites) {
         this.avalibleSites = avalibleSites;
     }
-
+    /**Класс настроек SpringBoot*/
     public class Spring{
+        /**Поле datasource */
 private Datasource datasource;
+        /**Поле jpa {@link JPA}*/
 private JPA jpa;
-
+        /**Getters and setters*/
     public Datasource getDatasource() {
         return datasource;
     }
@@ -48,12 +55,15 @@ private JPA jpa;
         this.jpa = jpa;
     }
 }
+    /**Класс получения Datasource*/
 public static class Datasource{
-
+        /**Поле адреса сервера*/
 private String url;
+        /**Поле UserName*/
 private String username;
+        /**Поле Password*/
 private String password;
-
+        /**Getters and setters*/
     public String getUrl() {
         return url;
     }
@@ -78,21 +88,25 @@ private String password;
         this.password = password;
     }
 }
-
+    /**Класс настроек JPA*/
 public static class JPA{
+        /**Поле Hibernate {@link Hibernate}*/
     private Hibernate hibernate;
+        /**Поле параметра ddl_auto*/
     private String ddl_auto;
-
+        /**Getters and setters*/
     public Hibernate getHibernate() {
         return hibernate;
     }
 
     public void setHibernate(Hibernate hibernate) {
         this.hibernate = hibernate;}
+        /**Класс настроек Hibernate */
 public static class Hibernate{
+            /**поле ddl_auto*/
         @JsonProperty("ddl-auto")
     private String ddl_auto;
-
+            /**Getters and setters*/
     public String getDdl_auto() {
         return ddl_auto;
     }
@@ -103,10 +117,12 @@ public static class Hibernate{
 }
 
 }
+/**Класс AvailableSites*/
     public static class AvailableSites {
+        /**Поле доступных для индексации и поиска сайтов*/
         @JsonProperty("sites")
         Site[] avalibleSites;
-
+        /**Getters and setters*/
         public Site[] getAvailableSites() {
             return avalibleSites;
         }
@@ -116,13 +132,15 @@ public static class Hibernate{
         }
     }
 
-
+/**Класс описывающий сущность Site*/
     public static class Site{
+        /** Поле адреса сайта*/
         @JsonProperty("url")
         public String url;
+        /**Поле имени сайта*/
         @JsonProperty("name")
         public String name;
-
+        /**Getters and setters*/
         public String getUrl() {
             return url;
         }

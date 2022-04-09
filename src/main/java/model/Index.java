@@ -1,20 +1,28 @@
 package model;
 
 import javax.persistence.*;
-
+/**Класс описывающий сущность Index
+ * @autor VG
+ * @version 0.1
+ * **/
 @Entity
 @Table (name = "indexeslist")
 public class Index  {
+    /**Поле ID*/
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+
     public int id;
+    /**Поле ID страницы*/
     @Column (name = "page_id")
     public int  page_id;
+    /**Поле Id леммы */
     @Column (name = "lemma_id")
     public int lemma_id;
+    /**Поле ранга леммы*/
     @Column (name = "lemma_rank")
     public float rank;
-
+    /**Getters and setters*/
     public int getId() {
         return id;
     }

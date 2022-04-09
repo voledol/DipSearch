@@ -1,15 +1,23 @@
 package model;
 
 import connections.sites.SiteConnect;
-
+/**Класс выдающий результат поискового запроса
+ * @autor VG
+ * @version 0.1
+ * **/
 public class ResultPage {
+    /**Поле адреса страницы*/
     String url;
+    /**Поле заголовка страницы*/
     String title;
+    /**Поле сниппет*/
     String snippet;
+    /**поле релевантность*/
     float relevance;
+    /**Поле создания класса SiteConnect {@link SiteConnect}*/
     private SiteConnect siteConnect = new SiteConnect();
 
-
+    /**getters and setters*/
     public String getUrl() {
         return url;
     }

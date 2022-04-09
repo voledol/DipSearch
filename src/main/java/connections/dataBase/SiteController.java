@@ -4,6 +4,7 @@ import interfaсes.DBRepository;
 import main.Main;
 import model.Index;
 import model.Lemma;
+import model.Page;
 import model.Site;
 import org.hibernate.Transaction;
 
@@ -14,25 +15,43 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * Класс контроллер для работы с таблицей Site в БД
+ * @autor VG
+ * @version 0.1
+ * **/
 public class SiteController implements DBRepository<Site> {
+    /**
+     * Функция получения добавления объекта {@link Site}
+     */
     @Override
     public void add(Site entity) {
         Transaction transaction = Main.sessionHibernate.beginTransaction();
         Main.sessionHibernate.save(entity);
         transaction.commit();
     }
-
+    /**
+     * Функция удаления объекта {@link Site}
+     */
     @Override
     public void delete(String id) {
         Main.sessionHibernate.delete(id);
     }
-
+    /**
+     * Функция обновления объекта {@link Site}
+     * @param entity - объект Index
+     */
     @Override
     public void update(Site entity) {
         Main.sessionHibernate.update(entity);
     }
-
+    /**
+     * Функция получения объекта {@link Site}
+     * @param criteria1 - ключ объекта
+     * @param criteria2 - значение
+     * @return возваращает объект Site с заданными параметрами если он сущетвует,
+     * возваращает пустой объект если  не найден объект с заданными параметрами в БД
+     * */
     @Override
     public Site get(String criteria1, String criteria2) {
         CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
@@ -44,38 +63,12 @@ public class SiteController implements DBRepository<Site> {
     }
 
     @Override
+    /**
+     * Функция проверки наличия объекта {@link Site} в БД
+     * @param id - ключ объекта
+     * @return возвращает true если объект есть в БД, false если объекта нет.
+     * */
     public boolean exists(String id) {
         return Main.sessionHibernate.contains(id);
-    }
-    public List<Lemma> findLemmaList(HashMap<String, Integer> searchString){
-        CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
-        CriteriaQuery<Lemma> query = builder.createQuery(Lemma.class);
-        Root<Lemma> root = query.from(Lemma.class);
-
-        List<Lemma> resultSet = new ArrayList<>();
-        for(Map.Entry entry: searchString.entrySet() ){
-            query.select(root).where(builder.like(root.get("lemma"), entry.getKey().toString()));
-            Lemma lem = Main.sessionHibernate.createQuery(query).getSingleResult();
-            resultSet.add(lem);
-        }
-        return resultSet;
-    }
-    public List<Index> findIndexList(String column, String value){
-        CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
-        CriteriaQuery<Index> query = builder.createQuery(Index.class);
-        Root<Index> root = query.from(Index.class);
-        List<Index> resultSet = new ArrayList<>();
-        query.select(root).where(builder.like(root.get(column),value));
-        List<Index> indexList = Main.sessionHibernate.createQuery(query).getResultList();
-        return resultSet;
-    }
-    public List<Index> findPageList(Lemma lemma) {
-        CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
-        CriteriaQuery<Index> query = builder.createQuery(Index.class);
-        Root<Index> root = query.from(Index.class);
-        List<Index> resultSet = new ArrayList<>();
-        query.select(root).where(builder.like(root.get("lemma_id"), String.valueOf(lemma.getId())));
-        List<Index> indexList = Main.sessionHibernate.createQuery(query).getResultList();
-        return resultSet;
     }
 }

@@ -1,20 +1,30 @@
 package model;
 
 import javax.persistence.*;
-
+/**Класс описывающий сущность Page
+ * @autor VG
+ * @version 0.1
+ * **/
 @Entity
 @Table (name = "page")
 public class Page {
+    /***/
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
+    /**Поле id*/
     private int id;
+    /**Поле путь*/
     private String path;
+    /**Поле код ответа страницы*/
     private int code;
+    /**поле контент на с ранице*/
     private String content;
+    /**Поле id сайта*/
     private int site_id;
-
+    /**Конструктор Page*/
     public Page(){
     }
+    /**Getters and setters*/
     public int getId() {
         return id;
     }

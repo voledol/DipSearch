@@ -9,14 +9,28 @@ import model.Lemma;
 import model.Page;
 import java.io.IOException;
 import java.util.*;
-
+/**
+ * Класс построничной индексации сайта
+ * @autor VG
+ * @version 0.1
+ * **/
 public class Indexation {
+    /**Поле создания PageController {@link PageController}*/
     private PageController pageDB = new PageController();
+    /**Поле создания LemmaController {@link LemmaController}*/
     private LemmaController lemmaDB = new LemmaController();
+    /**Поле создания IndexController {@link IndexController}*/
     private IndexController indexListCRUD = new IndexController();
+    /**Поле создания SiteConnect {@link SiteConnect}*/
     private SiteConnect connectSite = new SiteConnect();
+    /**Поле создания LemmCreator {@link LemCreator}*/
     private LemCreator lemCreator = new LemCreator();
+    /**Поле подсчета количества созданных иникальных лемм*/
     public static int lemmCount = 0;
+    /** Функция индексации страницы по адресу
+     * @param pageUrl - Адресс страницы в установленном формате
+     * при ошибке добавления индекса в БД и последующего его чтения пробрасывается NullpointerExepton
+     * при ошибке соединения с сайтом IOException*/
     public void indexPage(String  pageUrl) {
         connectSite.getConnection(pageUrl);
         HashMap<String, Integer> titleLemm = new HashMap<>();
@@ -58,6 +72,11 @@ public class Indexation {
         } catch (IOException e) {
             e.printStackTrace();
         }}
+    /**Функция расчета ранга леммы
+     * @param bodyLemm - Леммы тела сайта
+     * @param titleLemm - леммы заголовка сайта
+     * @return Возвращает список лемм с рачитанными рангами
+     * */
     public static HashMap<String, Float> calculateLemmaRank(HashMap<String, Integer> titleLemm, HashMap<String, Integer> bodyLemm){
         float rank;
         float tittleRank;
