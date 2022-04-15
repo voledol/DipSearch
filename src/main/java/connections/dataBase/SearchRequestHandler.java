@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 /**
  * Класс для получения данных из БД наобходимых для обработки поискового запроса
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 public class SearchRequestHandler {

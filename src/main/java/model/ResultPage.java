@@ -2,7 +2,7 @@ package model;
 
 import connections.sites.SiteConnect;
 /**Класс выдающий результат поискового запроса
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 public class ResultPage {

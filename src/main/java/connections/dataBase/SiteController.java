@@ -1,23 +1,17 @@
 package connections.dataBase;
 
-import interfaсes.DBRepository;
+import Interfaces.DBRepository;
 import main.Main;
-import model.Index;
-import model.Lemma;
-import model.Page;
 import model.Site;
 import org.hibernate.Transaction;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 /**
  * Класс контроллер для работы с таблицей Site в БД
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 public class SiteController implements DBRepository<Site> {
@@ -61,13 +55,12 @@ public class SiteController implements DBRepository<Site> {
         Main.sessionHibernate.createQuery(query).getSingleResult();
         return Main.sessionHibernate.createQuery(query).getSingleResult();
     }
-
-    @Override
     /**
      * Функция проверки наличия объекта {@link Site} в БД
      * @param id - ключ объекта
      * @return возвращает true если объект есть в БД, false если объекта нет.
      * */
+    @Override
     public boolean exists(String id) {
         return Main.sessionHibernate.contains(id);
     }

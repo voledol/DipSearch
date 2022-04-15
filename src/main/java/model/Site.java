@@ -3,7 +3,7 @@ package model;
 import javax.persistence.*;
 import java.sql.Date;
 /**Класс описывающий сущность Site
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 @Entity

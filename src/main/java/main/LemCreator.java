@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 /**
  * Класс создания лемм со стараницы саййта
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 public class LemCreator {
@@ -20,7 +20,7 @@ public class LemCreator {
 
     /**Функция получения лемма из екста страницы сайта
      * @param text -  текстовая часть страницы сайта
-     * @return возвращает список лемм полученны из текстовой части сайта*/
+     * @return возвращает список лемм полученны из текстовой части сайта */
     public  HashMap<String, Integer> getLem(String text) throws IOException {
         LuceneMorphology luceneMorph =
                 new RussianLuceneMorphology();

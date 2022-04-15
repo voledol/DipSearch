@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 /**Класс описывающий узловые ссылки сайта
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 public class Nodelink implements Comparable<Nodelink> {
@@ -53,15 +53,14 @@ public class Nodelink implements Comparable<Nodelink> {
     public String getUrl() {
         return url;
     }
-
-    @Override
     /**функция сравнения "глубины" ссылки*
      * @param node - объект класса  NodeLink
      * @return -1  если NodeLink#parent = null, node == NodeLink
-     * NodeLink#deth > node$deth
+     * NodeLink#deth more then node$deth
      * 1 если node#parent = null, NodeLink#parent == node#parent
-     *      * NodeLink#deth < node$deth
+     *      * NodeLink#deth less then node$depth
      */
+    @Override
     public int compareTo(Nodelink node) {
         if (this.getParent() == null) return -1;
         if (node.getParent() == null) return 1;
@@ -77,11 +76,11 @@ public class Nodelink implements Comparable<Nodelink> {
             return (this.getDepth() > node.getDepth()) ? this.getParent().compareTo(node) : this.compareTo(node.getParent());
         }
     }
-    @Override
     /**Функция определния  равенства ссылок
      * @param o - объект сравнения с текущим объектов
      * @return true если ссылки равны
      * false если не равны*/
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -90,13 +89,13 @@ public class Nodelink implements Comparable<Nodelink> {
 
         return Objects.equals(url, node.url);
     }
-    @Override
     /**Функция определнрия hachcode*/
+    @Override
     public int hashCode() {
         return url != null ? url.hashCode() : 0;
     }
-    @Override
     /**Функция вывода в строку объекта NodeLink*/
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("\t".repeat(Math.max(0, this.getDepth())));

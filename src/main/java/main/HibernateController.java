@@ -13,7 +13,7 @@ import org.hibernate.cfg.Configuration;
 
 /**
  * Класс соединения с БД с помощью Hibernate
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 public class HibernateController {
@@ -31,9 +31,7 @@ public class HibernateController {
     public  Session session = sessionFactory.openSession();
 
     /**Функция получения конфигурации Hibernate из файла конфигурации
-     *
       * @return возвращает sessionFactory подключения Hibernate
-     * возможно исключение при неверных параметрах файла конфигурации
      */
     public  SessionFactory getSessionFactory(){
         if (sessionFactory == null) {
@@ -57,7 +55,7 @@ public class HibernateController {
                 sessionFactory = configuration.buildSessionFactory(builder.build());
 
             } catch (Exception e) {
-                System.out.println("Исключение!" + e);
+                System.out.println("Exception" + e);
             }
         }
         return sessionFactory;

@@ -6,7 +6,7 @@ import model.Page;
 
 import javax.persistence.Entity;
 /**Класс получения свойст из файла application.yml
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 public class PropertyLoader{

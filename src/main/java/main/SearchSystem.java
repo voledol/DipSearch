@@ -8,6 +8,11 @@ import model.*;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * @author VG
+ * @version 0.1
+ * @deprecated
+ */
 public class SearchSystem {
     public String searchRequest;
     private SearchRequestHandler requests = new SearchRequestHandler();

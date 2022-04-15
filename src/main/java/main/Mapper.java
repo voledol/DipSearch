@@ -28,17 +28,16 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>> {
     /**Поле создания класса Indexation {@link Indexation}*/
     public Indexation idex = new Indexation();
     /**Конструктор класса SiteMapper
-     * @parem parent - родительская ссылка
+     * @param parent - родительская ссылка
      * @see Nodelink*/
     public SiteMapper(Nodelink parent) {
         this.parent = parent;
         this.SITE_URL = parent.getUrl();
     }
 
-
-    @Override
     /**Функция Fork Join Pool обработка полученыых ссылок и получения следующих
      * @return возвращает список всех доступных ссылок на сайте */
+    @Override
     public Set<Nodelink> compute() {
         links.add(parent);
         Set<Nodelink> childrenLinks = this.getChildrenLinks(parent);
@@ -56,7 +55,7 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>> {
     /**Функция получения ссылок с одной странице
      * @param  parent -  ссылка на страницу с которой необззодимо получить ссылки
      *@return возвращает список доступных на старнице ссылок
-     * выводит в консоль InterruptedException*/
+     @throws InterruptedException*/
     private Set<Nodelink> getChildrenLinks(Nodelink parent) {
         try {
             String url = SITE_URL;

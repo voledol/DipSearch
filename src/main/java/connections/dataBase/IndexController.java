@@ -1,56 +1,54 @@
 package connections.dataBase;
 
-import interfaсes.DBRepository;
+import Interfaces.DBRepository;
 import main.Main;
 import model.Index;
 import org.hibernate.Transaction;
-/**
- * Класс контроллер для работы с таблицей Index в БД
- * @autor VG
- * @version 0.1
- * **/
+
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
+/**
+ * Class controller for Index table in DB
+ * @author VG
+ * @version 0.1
+ * **/
 public class IndexController implements DBRepository<Index> {
-    @Override
     /**
-     * Функция получения добавления объекта {@link Index}
+     * Function add object in DB{@link Index}
+     * @param entity - entity DB\Object
      */
+    @Override
     public void add(Index entity) {
         Transaction transaction = Main.sessionHibernate.beginTransaction();
         Main.sessionHibernate.save(entity);
         transaction.commit();
     }
-
-    @Override
     /**
-     * Функция удаления объекта {@link Index}
-     * @param id - id объекта
+     * Function deleted Object from DB  {@link Index}
+     * @param id - object Id
      */
+    @Override
     public void delete(String id) {
         Main.sessionHibernate.delete(id);
     }
-
-    @Override
     /**
-     * Функция обновления объекта {@link Index}
-     * @param entity - объект Index
+     * Function updated object in DB {@link Index}
+     * @param entity - object Index
      */
+    @Override
     public void update(Index entity) {
         Main.sessionHibernate.update(entity);
     }
-
-    @Override
     /**
-     * Функция получения объекта {@link Index}
-     * @param criteria1 - ключ объекта
-     * @param criteria2 - значение
-     * @return возваращает объект Index с заданными параметрами если он сущетвует,
-     * возваращает пустой объект если  не найден объект с заданными параметрами в БД
+     * Function get object from {@link Index}
+     * @param criteria1 - object key
+     * @param criteria2 -  value
+     * @return object Index with given parameters, if it exist.
+     * return empty object if it don't exist
      * */
+    @Override
     public Index get(String criteria1, String criteria2) throws NullPointerException{
         CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
         CriteriaQuery<Index> query = builder.createQuery(Index.class);
@@ -59,13 +57,12 @@ public class IndexController implements DBRepository<Index> {
         Main.sessionHibernate.createQuery(query).getSingleResult();
         return Main.sessionHibernate.createQuery(query).getSingleResult();
     }
-
-    @Override
     /**
-     * Функция проверки наличия объекта {@link Index} в БД
-     * @param id - ключ объекта
-     * @return возвращает true если объект есть в БД, false если объекта нет.
+     * Function check exist object {@link Index} in DB
+     * @param id - object key
+     * @return true if object exist in DB, false if it don't exist
      * */
+    @Override
     public boolean exists(String id) {
         return Main.sessionHibernate.contains(id);
     }

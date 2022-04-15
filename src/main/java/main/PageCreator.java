@@ -10,7 +10,7 @@ import org.jsoup.nodes.Document;
 
 /**
  * Класс создания объектов класса Page bp Страниц сайта  {@link Page}
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 public class PageCreator {
@@ -42,6 +42,10 @@ public class PageCreator {
                     pageCount++;
                return page;
     }
+
+    /**
+     * @return количество созданных страниц за вермя работы
+     */
     public static int getPageCount(){
         return pageCount;
     }

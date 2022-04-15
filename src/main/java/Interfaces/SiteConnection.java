@@ -1,9 +1,9 @@
-package interfaсes;
+package Interfaces;
 
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
-/** Интерфейс описывающие подключение к сайтам
- * @autor VG
+/**Interface for site connection
+ * @author VG
  * @version 0.1
  **/
 public interface SiteConnection {

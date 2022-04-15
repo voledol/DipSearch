@@ -2,16 +2,15 @@ package model;
 
 import javax.persistence.*;
 /**Класс описывающий сущность Page
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 @Entity
 @Table (name = "page")
 public class Page {
-    /***/
+    /**Поле id*/
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    /**Поле id*/
     private int id;
     /**Поле путь*/
     private String path;

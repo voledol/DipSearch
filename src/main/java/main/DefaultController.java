@@ -1,5 +1,4 @@
 package main;
-import com.mysql.cj.xdevapi.JsonArray;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -9,16 +8,33 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.*;
 import java.util.concurrent.*;
 
+/** Class controller for API of search, indexing and statistic system
+ * @author  VG
+ * @version  0.1
+ */
 @Controller
 public class DefaultController {
+    /**
+     * Field create new object of Indexation class {@link Indexation}
+     */
     public Indexation indexing = new Indexation();
+    /**
+     * Field of start/stop indexing
+     */
     public static boolean indexation = false;
+    /**
+     * Field assignments sites from application.yml to site massive
+     */
     PropertyLoader.Site[] sites = Main.propertyes.getAvalibleSites().getAvailableSites();
     @RequestMapping("/")
     public String index() {
         return "index";
     }
 
+    /** Function started indexing
+     * @return JSON file with result of starting indexing. true if indexation is started,
+     * false if indexation don't started
+     */
     @RequestMapping("/api/startIndexing")
     @ResponseBody
     public String startIndexing() {
@@ -39,6 +55,12 @@ public class DefaultController {
 ////        }
         return  ans.toString() ;
     }
+
+    /** function of indexation for one page
+     * @param url - url of page
+     * @return JSON file with result of starting indexing. true if indexation is started,
+     * false if indexation don't started
+     */
     @RequestMapping("/api/indexpage")
     @ResponseBody
     public String indexingPage( String url){
@@ -56,6 +78,10 @@ public class DefaultController {
         }
         return ans.toString();
     }
+
+    /** Function get statistic of system working from DB
+     * @return JSON file with total and detailed statistic
+     */
     @RequestMapping("/api/statistics")
     @ResponseBody
     public String statistic(){
@@ -63,14 +89,8 @@ public class DefaultController {
         JSONObject ans = new JSONObject();
         ans.put("result","true");
         ans.put("total" , stat.statistic());
-        JSONArray siteLikeAr = new JSONArray();
-
-        for(int i = 0; i < sites.length-1; i++){
-         siteLikeAr.put(stat.detailedStatistic(sites[i]));
-        }
-        ans.put("detailed", siteLikeAr);
+        ans.put("detailed", stat.detailedStatistic(sites));
         return ans.toString();
     }
-
 }
 

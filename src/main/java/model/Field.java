@@ -4,16 +4,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-@Entity
 /**Класс описывающий сущность Field
- * @autor VG
+ * @author VG
  * @version 0.1
- * **/
+  **/
+@Entity
 public class Field {
+    /**Поле id*/
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
-    /**Поле id*/
     public int id;
     /**Поле имя */
     public String name;

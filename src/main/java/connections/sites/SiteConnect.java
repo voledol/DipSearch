@@ -1,6 +1,6 @@
 package connections.sites;
 
-import interfaсes.SiteConnection;
+import Interfaces.SiteConnection;
 import lombok.SneakyThrows;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -9,9 +9,16 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
+/**
+ * Класс выполнящий соедиение с сайтом
+ */
 public class SiteConnect implements SiteConnection {
 public Connection.Response response;
 
+    /** функция выполняющая соединение с сайтом
+     * @param url - адрес сатй
+     * @return - возвращает соедние с сайтом
+     */
     @Override
     public Connection.Response getConnection(String url) {
         try{
@@ -28,6 +35,10 @@ public Connection.Response response;
         return response;
     }
 
+    /** функция получения коонтента со страницы по тегу сселектору
+     * @param selector - селектор тег html страницы
+     * @return - возвращает выбранный по тегу контент страницы
+     */
     @SneakyThrows
     @Override
     public Document getContent(String selector) {

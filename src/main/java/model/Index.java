@@ -2,7 +2,7 @@ package model;
 
 import javax.persistence.*;
 /**Класс описывающий сущность Index
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 @Entity

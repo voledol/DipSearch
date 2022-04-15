@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.*;
 /**
  * Класс построничной индексации сайта
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 public class Indexation {
@@ -29,8 +29,7 @@ public class Indexation {
     public static int lemmCount = 0;
     /** Функция индексации страницы по адресу
      * @param pageUrl - Адресс страницы в установленном формате
-     * при ошибке добавления индекса в БД и последующего его чтения пробрасывается NullpointerExepton
-     * при ошибке соединения с сайтом IOException*/
+     * **/
     public void indexPage(String  pageUrl) {
         connectSite.getConnection(pageUrl);
         HashMap<String, Integer> titleLemm = new HashMap<>();

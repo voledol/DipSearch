@@ -3,10 +3,12 @@ package main;
 import connections.dataBase.LemmaController;
 import connections.dataBase.SiteController;
 import model.Page;
+import model.Site;
+import org.json.JSONArray;
 import org.json.JSONObject;
 /**
  * Класс сборщик статистики содержащихс в БД данных о сайтах и процессе работы
- * @autor VG
+ * @author VG
  * @version 0.1
  * **/
 public class DBstatistics {
@@ -29,17 +31,35 @@ public class DBstatistics {
      * @param site - доступные сайты в файле application.yml
      * @return воззвращает с JSON объект с собранной статистикой в формате параметр: значение.
      * **/
-    public JSONObject detailedStatistic(PropertyLoader.Site site){
-        PropertyLoader.Site[] sites = Main.propertyes.getAvalibleSites().getAvailableSites();
-        JSONObject[] ansDetailed = new JSONObject[sites.length];
-            JSONObject ansSite = new JSONObject();
-            ansSite.put("url", site.url);
-            ansSite.put("name", site.name);
-            ansSite.put("status", 0);
-            ansSite.put("statusTime", 0);
-            ansSite.put("Error", 0);
-            ansSite.put("lemmas", "lemCount");
-        return ansSite;
+    public JSONArray detailedStatistic(PropertyLoader.Site[] site){
+
+        JSONArray ansDetailed = new JSONArray();
+        try {
+            for (int i = 0 ; i < site.length -1;i++ ){
+                Site siteFromDB = siteStatisticGet.get("url", site[i].url);
+                JSONObject ansSite = new JSONObject();
+                ansSite.put("url", siteFromDB.getUrl());
+                ansSite.put("name", siteFromDB.getName());
+                if (siteFromDB.getStatus() == null)
+                {ansSite.put("status", "FAILED");}
+                else{ansSite.put("status", siteFromDB.getStatus());}
+                if (siteFromDB.getStatus_time() == null)
+                {ansSite.put("statusTime", "00:00");}
+                else{ansSite.put("statusTime", siteFromDB.getStatus_time());}
+                if (siteFromDB.getLast_error()==null)
+                {ansSite.put("Error", "No Errors");}
+                else{ansSite.put("Error", siteFromDB.getLast_error());}
+                if(lemmaStatisticGet.getLemsCount(siteFromDB.getId())==0)
+                {ansSite.put("lemmas", "0");}
+                else{ansSite.put("lemmas", lemmaStatisticGet.getLemsCount(siteFromDB.getId()));}
+                ansDetailed.put(ansSite);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return ansDetailed;
     }
 }
 
