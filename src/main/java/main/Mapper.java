@@ -1,8 +1,6 @@
 package main;
 
-import model.Page;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.HashSet;
@@ -42,7 +40,7 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>> {
         links.add(parent);
         Set<Nodelink> childrenLinks = this.getChildrenLinks(parent);
         pageCreator.createPage(parent.getUrl());
-        idex.indexPage(parent.getUrl());// остановился вот тут. думай дальше. надо в первый раз не брать url сайта
+        idex.indexPage(parent.getUrl());
         Set<SiteMapper> taskList = new HashSet<>();
         for (Nodelink child : childrenLinks) {
             taskList.add((SiteMapper) new SiteMapper(child).fork());
@@ -59,7 +57,7 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>> {
     private Set<Nodelink> getChildrenLinks(Nodelink parent) {
         try {
             String url = SITE_URL;
-            Document doc = getPageContent(parent);
+            Elements doc = getPageContent(parent);
             Elements links = doc.select("a[href]");
             Set<String> absUrls = links.stream().map(el -> el.attr("abs:href"))
                     .filter(u -> !u.equals(parent.getUrl()))
@@ -83,9 +81,9 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>> {
     }
     /**Функция получения контента страницы в тектовом фале
      * @param node - узловая ссылка */
-    public Document getPageContent(Nodelink node){
+    public Elements getPageContent(Nodelink node){
         Main.connect.getConnection(node.getUrl());
-        Document doc = Main.connect.getContent(node.getUrl());
+        Elements doc = Main.connect.getContent(node.getUrl());
         return doc;
     }
 

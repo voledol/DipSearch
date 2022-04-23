@@ -28,14 +28,12 @@ public class HibernateController {
     /**Поле sessionFactory*/
     public  SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
     /**Поле сессии */
-    public  Session session = sessionFactory.openSession();
+    public Session session = sessionFactory.openSession();
 
     /**Функция получения конфигурации Hibernate из файла конфигурации
       * @return возвращает sessionFactory подключения Hibernate
      */
     public  SessionFactory getSessionFactory(){
-        if (sessionFactory == null) {
-            try {
                 Configuration configuration = new Configuration().configure();
                 configuration.setProperty("connection.driver_class", "com.mysql.cj.jdbc.Driver");
                 configuration.setProperty("connection.url", Main.propertyes.getSpring().getDatasource().getUrl());
@@ -53,11 +51,9 @@ public class HibernateController {
                 configuration.addAnnotatedClass(Site.class);
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
-
-            } catch (Exception e) {
-                System.out.println("Exception" + e);
-            }
-        }
         return sessionFactory;
     }
+//    public synchronized void addEntity(Object entity){
+//
+//    }
 }

@@ -34,7 +34,11 @@ public class Indexation {
         connectSite.getConnection(pageUrl);
         HashMap<String, Integer> titleLemm = new HashMap<>();
         HashMap<String, Integer> bodyLemm = new HashMap<>();
-        Page page = (Page) pageDB.get("path", pageUrl);
+        String correctUrl = getCorrectUrl(pageUrl);
+        Page page = pageDB.get("path",correctUrl);
+        if(page.getPath()==null) {
+            page = pageDB.get("path", "/");
+        }
         try {
                 String indexPage =pageUrl;
                 titleLemm = lemCreator.getLem((connectSite.getContent("title")).toString());
@@ -48,10 +52,9 @@ public class Indexation {
                 for (Map.Entry<String, Integer> entry : bodyLemm.entrySet()) {
                     Index index = new Index();
                     Lemma lemma = new Lemma();
-                    lemma.setSite_id(page.getSite_id());
-                    index.setPage_id(page.getId());
-                    lemma = (Lemma) lemmaDB.get("lemma", entry.getKey());
-                    if (lemma != null) {
+
+                    lemma =lemmaDB.get("lemma", entry.getKey());
+                    if (lemma.getLemma() != null) {
                         lemma.setFrequency(lemma.getFrequency() + entry.getValue());
                         lemmaDB.update(lemma);
                         index.setLemma_id(lemma.getId());
@@ -60,15 +63,17 @@ public class Indexation {
                         lemma.setFrequency(1);
                         lemmaDB.add(lemma);
                         lemmCount++;
-                        index.setLemma_id(((Lemma)lemmaDB.get("lemma", entry.getKey())).getId());
+                        index.setLemma_id((lemmaDB.get("lemma", entry.getKey())).getId());
                     }
+                    lemma.setSite_id(page.getSite_id());
+                    index.setPage_id(page.getId());
                     index.setRank(rank.get(entry.getKey()));
                     indexListCRUD.add(index);
                 }
                 titleLemm.clear();
                 bodyLemm.clear();
 
-        } catch (IOException e) {
+        } catch (IOException  e) {
             e.printStackTrace();
         }}
     /**Функция расчета ранга леммы
@@ -94,6 +99,17 @@ public class Indexation {
             }
         }
         return lemmaRank;
+    }
+    public String getCorrectUrl(String url){
+        String[] split = url.split("/");
+        StringBuilder correctUrl = new StringBuilder();
+        if(split.length<3){
+            return "";
+        }
+        for(int i = 3; i< split.length;i++){
+            correctUrl.append("/").append(split[i]);
+        }
+       return String.valueOf(correctUrl);
     }
 
 

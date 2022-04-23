@@ -6,13 +6,14 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import connections.dataBase.SiteController;
 import connections.sites.SiteConnect;
 import model.Site;
-import model.SiteStatus;
 import org.hibernate.Session;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootApplication
 /**Класс Main. запуск и работа приложения
@@ -32,10 +33,12 @@ public class Main {
     public static SiteConnect connect = new SiteConnect();
     /**Поле подсчета добавленных в БД сайтов для индексации и поиска*/
     public static int sitesCount = 0;
+    public static List<Site> allowedSitesList = new ArrayList<>();
     /***/
     public static void main(String[] args){
-        sessionHibernate = hibernateController.getSessionFactory().openSession();
        propertyes = aplicationReader();
+       sessionHibernate = hibernateController.getSessionFactory().openSession();
+       allowedSitesList = siteCRUD.getAllowedSitesList();
        SpringApplication.run(Main.class, args);
     }
     /**Функция получения конфигурационных параметров из файла application.yml и добавления списка сайтов в БД

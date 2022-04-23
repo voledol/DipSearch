@@ -6,6 +6,10 @@ import connections.sites.SiteConnect;
 import model.Page;
 import model.Site;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.regex.Pattern;
 
 
 /**
@@ -32,12 +36,14 @@ public class PageCreator {
                connect.getConnection(url);
                     String[] urlSplit = url.split("/");
                     String urlFin = urlSplit[0] + "//"+ urlSplit[1] + urlSplit[2];
-                    Document content = connect.getContent("html");
+                    Elements content = connect.getContent("html");
                     page.setPath(url.replaceAll(urlFin,""));
+                    if(page.getPath().isEmpty()){
+                        page.setPath("/");
+                    }
                     page.setContent(content.text().replaceAll("'",""));
                     page.setCode(connect.response.statusCode());
-                    Site site = (Site) siteDB.get("url",urlFin);
-                    page.setSite_id(site.getId());
+                    page.setSite_id(getSiteId(url));
                     pageDB.add(page);
                     pageCount++;
                return page;
@@ -48,5 +54,14 @@ public class PageCreator {
      */
     public static int getPageCount(){
         return pageCount;
+    }
+    public int getSiteId(String url){
+        int id = 0;
+        for(Site str: Main.allowedSitesList){
+            if(url.contains(str.getUrl())){
+                id = str.getId();
+            }
+        }
+        return id;
     }
 }

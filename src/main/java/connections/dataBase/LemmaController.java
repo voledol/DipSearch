@@ -1,7 +1,9 @@
 package connections.dataBase;
 
 import Interfaces.DBRepository;
+import main.HibernateController;
 import main.Main;
+import main.PropertyLoader;
 import model.Lemma;
 import org.hibernate.Transaction;
 
@@ -9,6 +11,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -21,6 +24,7 @@ public class LemmaController implements DBRepository<Lemma> {
      * Функция получения добавления объекта {@link Lemma}
      */
     @Override
+    @Transactional
     public void add(Lemma entity) {
         Transaction transaction = Main.sessionHibernate.beginTransaction();
         Main.sessionHibernate.save(entity);
@@ -51,12 +55,19 @@ public class LemmaController implements DBRepository<Lemma> {
      * */
     @Override
     public Lemma get(String criteria1, String criteria2) throws NullPointerException {
-        CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
-        CriteriaQuery<Lemma> query = builder.createQuery(Lemma.class);
-        Root<Lemma> root = query.from(Lemma.class);
-        query.select(root).where(builder.like(root.get(criteria1), criteria2));
-        Main.sessionHibernate.createQuery(query).getSingleResult();
-        return Main.sessionHibernate.createQuery(query).getSingleResult();
+        Lemma resLemm = new Lemma();
+        try{
+            CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
+            CriteriaQuery<Lemma> query = builder.createQuery(Lemma.class);
+            Root<Lemma> root = query.from(Lemma.class);
+            query.select(root).where(builder.like(root.get(criteria1), criteria2));
+            resLemm = Main.sessionHibernate.createQuery(query).getSingleResult();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return resLemm;
     }
     /**
      * Функция проверки наличия объекта {@link Lemma} в БД

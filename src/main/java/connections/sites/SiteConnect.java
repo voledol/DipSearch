@@ -20,7 +20,7 @@ public Connection.Response response;
      * @return - возвращает соедние с сайтом
      */
     @Override
-    public Connection.Response getConnection(String url) {
+    public  Connection.Response getConnection(String url) {
         try{
             response = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0")
@@ -28,6 +28,7 @@ public Connection.Response response;
                     .ignoreHttpErrors(true)
                     .timeout(10000)
                     .execute();
+
         }
         catch (IOException e){
             e.printStackTrace();
@@ -41,9 +42,15 @@ public Connection.Response response;
      */
     @SneakyThrows
     @Override
-    public Document getContent(String selector) {
-        Document doc = response.parse();
-        Elements content = doc.select("html");
-        return doc;
+    public Elements getContent(String selector) {
+        Elements content = new Elements();
+        try{
+           Document doc = response.parse();
+           content = doc.select("html");
+        }
+        catch (Exception e ){
+            e.printStackTrace();
+        }
+        return content;
     }
 }

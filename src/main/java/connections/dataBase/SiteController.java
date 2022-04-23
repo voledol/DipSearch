@@ -8,6 +8,9 @@ import org.hibernate.Transaction;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Класс контроллер для работы с таблицей Site в БД
@@ -19,6 +22,7 @@ public class SiteController implements DBRepository<Site> {
      * Функция получения добавления объекта {@link Site}
      */
     @Override
+    @Transactional
     public void add(Site entity) {
         Transaction transaction = Main.sessionHibernate.beginTransaction();
         Main.sessionHibernate.save(entity);
@@ -48,12 +52,18 @@ public class SiteController implements DBRepository<Site> {
      * */
     @Override
     public Site get(String criteria1, String criteria2) {
-        CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
-        CriteriaQuery<Site> query = builder.createQuery(Site.class);
-        Root<Site> root = query.from(Site.class);
-        query.select(root).where(builder.like(root.get(criteria1), criteria2));
-        Main.sessionHibernate.createQuery(query).getSingleResult();
-        return Main.sessionHibernate.createQuery(query).getSingleResult();
+        Site resSite = new Site();
+        try{
+            CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
+            CriteriaQuery<Site> query = builder.createQuery(Site.class);
+            Root<Site> root = query.from(Site.class);
+            query.select(root).where(builder.like(root.get(criteria1), criteria2));
+            resSite = Main.sessionHibernate.createQuery(query).getSingleResult();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return resSite;
     }
     /**
      * Функция проверки наличия объекта {@link Site} в БД
@@ -63,5 +73,19 @@ public class SiteController implements DBRepository<Site> {
     @Override
     public boolean exists(String id) {
         return Main.sessionHibernate.contains(id);
+    }
+    public List<Site> getAllowedSitesList(){
+        List<Site> allowedSitesList = new ArrayList<>();
+        try{
+            CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
+            CriteriaQuery<Site> query = builder.createQuery(Site.class);
+            Root<Site> root = query.from(Site.class);
+            query.select(root).where(builder.gt(root.get("id"), 0));
+            allowedSitesList = Main.sessionHibernate.createQuery(query).getResultList();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return allowedSitesList ;
     }
 }

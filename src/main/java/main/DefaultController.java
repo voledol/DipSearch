@@ -39,21 +39,12 @@ public class DefaultController {
     @ResponseBody
     public String startIndexing() {
         JSONObject ans = new JSONObject();
-        List< SiteMapper> tasks = new ArrayList<>();
-//        if(Thread.activeCount()>10){
-//            ans.put("result", "false");
-//            ans.put("erros", "индексация уже запущена");
-//        }
-//        else{
-            ans.put("result", "true");
-            Set<Nodelink> pool1 = new ForkJoinPool().invoke(new SiteMapper(new Nodelink(sites[1].getUrl())));
-            indexation = true;
-    //            ForkJoinPool pool1 = new ForkJoinPool(2, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false);
-//            ForkJoinPool pool2 = new ForkJoinPool(2, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false);
-//            pool1.invoke(new SiteMapper(new Nodelink(sites[1].getUrl())));
-////            pool2.invoke(new SiteMapper(new Nodelink(sites[2].getUrl())));
-////        }
-        return  ans.toString() ;
+        ans.put("result", "true");
+        for (int i = 0; i < sites.length - 1; i++) {
+            ForkJoinPool pool1 = new ForkJoinPool(6, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false);
+            pool1.invoke(new SiteMapper(new Nodelink(sites[1].getUrl())));
+        }
+        return ans.toString();
     }
 
     /** function of indexation for one page

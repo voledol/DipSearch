@@ -1,6 +1,7 @@
 package connections.dataBase;
 
 import Interfaces.DBRepository;
+import main.HibernateController;
 import main.Main;
 import model.Index;
 import org.hibernate.Transaction;
@@ -9,6 +10,8 @@ import org.hibernate.Transaction;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
+
 /**
  * Class controller for Index table in DB
  * @author VG
@@ -20,6 +23,7 @@ public class IndexController implements DBRepository<Index> {
      * @param entity - entity DB\Object
      */
     @Override
+    @Transactional
     public void add(Index entity) {
         Transaction transaction = Main.sessionHibernate.beginTransaction();
         Main.sessionHibernate.save(entity);
@@ -50,12 +54,18 @@ public class IndexController implements DBRepository<Index> {
      * */
     @Override
     public Index get(String criteria1, String criteria2) throws NullPointerException{
-        CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
-        CriteriaQuery<Index> query = builder.createQuery(Index.class);
-        Root<Index> root = query.from(Index.class);
-        query.select(root).where(builder.like(root.get(criteria1), criteria2));
-        Main.sessionHibernate.createQuery(query).getSingleResult();
-        return Main.sessionHibernate.createQuery(query).getSingleResult();
+        Index resIndex = new Index();
+        try{
+            CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
+            CriteriaQuery<Index> query = builder.createQuery(Index.class);
+            Root<Index> root = query.from(Index.class);
+            query.select(root).where(builder.like(root.get(criteria1), criteria2));
+           resIndex = Main.sessionHibernate.createQuery(query).getSingleResult();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return resIndex;
     }
     /**
      * Function check exist object {@link Index} in DB

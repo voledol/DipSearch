@@ -8,6 +8,8 @@ import org.hibernate.Transaction;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
+
 /**
  * Класс контроллер для работы с таблицей Page в БД
  * @author VG
@@ -18,11 +20,11 @@ public class PageController implements DBRepository<Page>{
      * Функция получения добавления объекта {@link Page}
      */
     @Override
-    public void add(Page entity) {
+    @Transactional
+    public synchronized void add(Page entity) {
         Transaction transaction = Main.sessionHibernate.beginTransaction();
         Main.sessionHibernate.save(entity);
         transaction.commit();
-
     }
     /**
      * Функция удаления объекта {@link Page}
@@ -48,12 +50,20 @@ public class PageController implements DBRepository<Page>{
      * */
     @Override
     public Page get(String criteria1, String criteria2) {
-        CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
+        Page resPage = new Page();
+        try{
+            CriteriaBuilder builder = Main.sessionHibernate.getCriteriaBuilder();
             CriteriaQuery<Page> query = builder.createQuery(Page.class);
             Root<Page> root = query.from(Page.class);
             query.select(root).where(builder.like(root.get(criteria1), criteria2));
-             Main.sessionHibernate.createQuery(query).getSingleResult();
-            return Main.sessionHibernate.createQuery(query).getSingleResult();
+            Main.sessionHibernate.createQuery(query).getSingleResult();
+            resPage =Main.sessionHibernate.createQuery(query).getSingleResult();
+        }
+        catch (Exception e){
+            System.out.println(new StringBuilder().append("Страница не найдена. ошибка в записи пути").append(e.toString()));
+
+        }
+            return resPage;
     }
     /**
      * Функция проверки наличия объекта {@link Page} в БД
