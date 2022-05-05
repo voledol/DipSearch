@@ -4,6 +4,7 @@ package main;
 import connections.dataBase.PageController;
 import connections.dataBase.SearchRequestHandler;
 import connections.dataBase.SiteController;
+import connections.sites.SiteConnect;
 import model.*;
 import java.io.IOException;
 import java.util.*;
@@ -19,7 +20,28 @@ public class SearchSystem {
     private PageController pageDB = new PageController();
     private LemCreator lemCreator = new LemCreator();
 
-    public  List<ResultPage> find(String searchRequest){
+    public  List<ResultPage> find(String searchRequest, String site, String offset, String limit){
+        int offsetInt;
+        int limitInt;
+        int site_id;
+        if(site.isEmpty()){
+            site_id = 0;
+        }
+        else{
+            site_id = Integer.parseInt(site);
+        }
+        if(offset.isEmpty()){
+            offsetInt = 0;
+        }
+        else{
+            offsetInt = Integer.parseInt(offset);
+        }
+        if (limit.isEmpty()){
+            limitInt = 20;
+        }
+        else{
+            limitInt = Integer.parseInt(limit);
+        }
         List<ResultPage> results = new ArrayList<>();
         HashMap<String, Integer> lemsWFR = new HashMap<>();
         List<Lemma> lems = new ArrayList<>();
@@ -34,14 +56,17 @@ public class SearchSystem {
         for(int i =1; i < lems.size();i++){
             ind = removePages(lems.get(i), ind);
         }
-
         for (Index index: ind){
-            Page page = pageDB.get("id", String.valueOf(index.getPage_id()));
             ResultPage resultPage = new ResultPage();
+            Page page = pageDB.get("id", String.valueOf(index.getPage_id()));
+            if(page.getId()==site_id){resultPage.setSite_id(page.getSite_id());}
+            else{continue;}
             resultPage.setUrl(page.getPath());
             resultPage.setTitle();
+            resultPage.setSnippet(getSnippet(page.getContent()));
             resultPage.setRelevance(relevance(index.getPage_id(), lems));
             results.add(resultPage);
+
         }
         for(ResultPage page: results){
             System.out.println(page.getUrl());
@@ -76,5 +101,8 @@ public class SearchSystem {
         }
         return finPages;
 
+    }
+    public String getSnippet(String content){
+        return "не реализовано";
     }
 }
