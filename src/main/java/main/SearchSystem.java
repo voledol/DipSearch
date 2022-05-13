@@ -6,21 +6,25 @@ import connections.dataBase.SearchRequestHandler;
 import connections.dataBase.SiteController;
 import connections.sites.SiteConnect;
 import model.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author VG
  * @version 0.1
- * @deprecated
  */
 public class SearchSystem {
-    public String searchRequest;
     private SearchRequestHandler requests = new SearchRequestHandler();
     private PageController pageDB = new PageController();
     private LemCreator lemCreator = new LemCreator();
 
-    public  List<ResultPage> find(String searchRequest, String site, String offset, String limit){
+    public  JSONObject find(String searchRequest, String site, String offset, String limit){
+        JSONObject result = new JSONObject();
         int offsetInt;
         int limitInt;
         int site_id;
@@ -42,7 +46,7 @@ public class SearchSystem {
         else{
             limitInt = Integer.parseInt(limit);
         }
-        List<ResultPage> results = new ArrayList<>();
+        JSONArray results = new JSONArray();
         HashMap<String, Integer> lemsWFR = new HashMap<>();
         List<Lemma> lems = new ArrayList<>();
         try {
@@ -63,20 +67,21 @@ public class SearchSystem {
             else{continue;}
             resultPage.setUrl(page.getPath());
             resultPage.setTitle();
-            resultPage.setSnippet(getSnippet(page.getContent()));
+            resultPage.setSnippet(getSnippet(page.getContent(), searchRequest));
             resultPage.setRelevance(relevance(index.getPage_id(), lems));
-            results.add(resultPage);
+            results.put(resultPage);
 
         }
-        for(ResultPage page: results){
-            System.out.println(page.getUrl());
-            System.out.println(page.getTitle());
-            System.out.println(page.getRelevance());
-        }
         if(results.isEmpty()){
-            return results = new ArrayList<>();
+            result.put("result",false);
+            result.put("error","задан пустой поисковой запрос");
+            return result;
         }
-        return results;
+        result.put("result", true);
+        result.put("count", results.length());
+        JSONArray resultsList = new JSONArray();
+        result.put("data", resultsList);
+        return result;
     }
     public  float relevance(int page_id, List<Lemma> lems){
         float rank = 0;
@@ -102,7 +107,16 @@ public class SearchSystem {
         return finPages;
 
     }
-    public String getSnippet(String content){
+    public String getSnippet(String content, String searchRequest) {
+        String[] wordList = searchRequest.split(" ");
+            Pattern start = Pattern.compile(wordList[1]);
+            Matcher matcherStart = start.matcher(content);
+        Pattern end = Pattern.compile(wordList[wordList.length-1]);
+        Matcher matcherEnd = end.matcher(content);
+        /**найти позицию первого слова, найти позицию второго. удалить лишнее и поставить жирный шрифт
+         * */
+
+
         return "не реализовано";
     }
 }

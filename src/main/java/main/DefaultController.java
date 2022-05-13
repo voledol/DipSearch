@@ -3,6 +3,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
@@ -18,6 +19,7 @@ public class DefaultController {
      * Field create new object of Indexation class {@link Indexation}
      */
     public Indexation indexing = new Indexation();
+    public SearchSystem searchSystem = new SearchSystem();
     /**
      * Field of start/stop indexing
      */
@@ -82,6 +84,12 @@ public class DefaultController {
         ans.put("total" , stat.statistic());
         ans.put("detailed", stat.detailedStatistic(sites));
         return ans.toString();
+    }
+    @RequestMapping("/api/search")
+    @ResponseBody
+    public JSONObject search(@RequestParam String query,@RequestParam String site,@RequestParam String offset,@RequestParam String limit){
+        JSONObject ans = searchSystem.find(query, site, offset, limit);;
+        return ans;
     }
 }
 
