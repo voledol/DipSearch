@@ -108,15 +108,18 @@ public class SearchSystem {
 
     }
     public String getSnippet(String content, String searchRequest) {
+        String snippet = "";
         String[] wordList = searchRequest.split(" ");
-            Pattern start = Pattern.compile(wordList[1]);
-            Matcher matcherStart = start.matcher(content);
-        Pattern end = Pattern.compile(wordList[wordList.length-1]);
-        Matcher matcherEnd = end.matcher(content);
-        /**найти позицию первого слова, найти позицию второго. удалить лишнее и поставить жирный шрифт
-         * */
+        String regString = "(("+wordList[0]+")([\\s\\S]+?)("+wordList[wordList.length]+"))";
+        Pattern pattern = Pattern.compile(regString);
+        Matcher matcher = pattern.matcher(content);
+        if(matcher.find()){
+            snippet = "<b> " + matcher.group().toString() + " </b>";
+        }
+        else{
+            snippet = "snippet не найден";
+        }
 
-
-        return "не реализовано";
+        return snippet;
     }
 }

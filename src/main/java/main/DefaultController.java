@@ -39,14 +39,14 @@ public class DefaultController {
      */
     @RequestMapping("/api/startIndexing")
     @ResponseBody
-    public String startIndexing() {
+    public JSONObject startIndexing() {
         JSONObject ans = new JSONObject();
         ans.put("result", "true");
         for (int i = 0; i < sites.length - 1; i++) {
             ForkJoinPool pool1 = new ForkJoinPool(6, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false);
             pool1.invoke(new SiteMapper(new Nodelink(sites[1].getUrl())));
         }
-        return ans.toString();
+        return ans;
     }
 
     /** function of indexation for one page
@@ -56,7 +56,7 @@ public class DefaultController {
      */
     @RequestMapping("/api/indexpage")
     @ResponseBody
-    public String indexingPage( String url){
+    public JSONObject indexingPage( String url){
         JSONObject ans = new JSONObject();
         String[] urlSplit = url.split("/");
         String urlFin = urlSplit[0] + "//"+ urlSplit[1] + urlSplit[2];
@@ -69,7 +69,7 @@ public class DefaultController {
             ans.put("result","false");
             ans.put("error", "Данная страница находится за пределами сайтов, указанных в конфигурационном файле");
         }
-        return ans.toString();
+        return ans;
     }
 
     /** Function get statistic of system working from DB
@@ -77,13 +77,13 @@ public class DefaultController {
      */
     @RequestMapping("/api/statistics")
     @ResponseBody
-    public String statistic(){
+    public JSONObject statistic(){
         DBstatistics stat = new DBstatistics();
         JSONObject ans = new JSONObject();
         ans.put("result","true");
         ans.put("total" , stat.statistic());
         ans.put("detailed", stat.detailedStatistic(sites));
-        return ans.toString();
+        return ans;
     }
     @RequestMapping("/api/search")
     @ResponseBody
