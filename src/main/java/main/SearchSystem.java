@@ -47,18 +47,14 @@ public class SearchSystem {
             limitInt = Integer.parseInt(limit);
         }
         JSONArray results = new JSONArray();
-        HashMap<String, Integer> lemsWFR = new HashMap<>();
-        List<Lemma> lems = new ArrayList<>();
-        try {
-             lemsWFR = lemCreator.getLem(searchRequest);
-            lems = requests.findLemmaList(lemsWFR);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Collections.sort(lems);
-        List<Index> ind = requests.findIndexList("lemma_Id",String.valueOf(lems.get(0).getId()));
-        for(int i =1; i < lems.size();i++){
-            ind = removePages(lems.get(i), ind);
+        HashMap<String, Integer> lemsOfSearchRequest = new HashMap<>();
+        List<Lemma> lemsFromDB = new ArrayList<>();
+        lemsOfSearchRequest = lemCreator.getLem(searchRequest);
+        lemsFromDB = requests.findLemmaList(lemsOfSearchRequest);
+        Collections.sort(lemsFromDB);
+        List<Index> ind = requests.findIndexList("lemma_Id",String.valueOf(lemsFromDB.get(0).getId()));
+        for(int i =1; i < lemsFromDB.size();i++){
+            ind = removePages(lemsFromDB.get(i), ind);
         }
         for (Index index: ind){
             ResultPage resultPage = new ResultPage();
@@ -68,7 +64,7 @@ public class SearchSystem {
             resultPage.setUrl(page.getPath());
             resultPage.setTitle();
             resultPage.setSnippet(getSnippet(page.getContent(), searchRequest));
-            resultPage.setRelevance(relevance(index.getPage_id(), lems));
+            resultPage.setRelevance(relevance(index.getPage_id(), lemsFromDB));
             results.put(resultPage);
 
         }

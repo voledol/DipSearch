@@ -18,38 +18,26 @@ public class LemCreator {
     /**Поле морфологических частей речи подлежащих удалению из списка лемм*/
     public  String[] partsOfSpeech = {"СОЮЗ","МЕЖД","ПРЕДЛ","ЧАСТ"};
 
+
     /**Функция получения лемма из екста страницы сайта
      * @param text -  текстовая часть страницы сайта
      * @return возвращает список лемм полученны из текстовой части сайта */
-    public  HashMap<String, Integer> getLem(String text) throws IOException {
-        LuceneMorphology luceneMorph =
-                new RussianLuceneMorphology();
-        List<List<String>> lem  = new ArrayList<>();
+    public  HashMap<String, Integer> getLem(String text) {
+        List<List<String>> lemWorkArray  = new ArrayList<>();
         String[] words = text.toLowerCase()
                 .replaceAll("[A-z]", "")
                 .replaceAll("[^\\p{L}\\p{Z}]+", "").replaceAll("[^А-я,\\s]", "")
                 .split("\\s");
+
         for (String word : words){
          if(word.isEmpty()){
              continue;
-         }else {lem.add(luceneMorph.getNormalForms(word));
+         }else {
+             lemWorkArray.add(getRussianMorhology().getNormalForms(word));
          }
+         lemmas = setLemmasCount(lemWorkArray);
+        }
 
-        }
-        for(List<String> lemma: lem){
-            if (lemma.size() > 1){
-                for(int k = 0; k < lemma.size() ; k++){
-                    if(isWord(luceneMorph.getMorphInfo(lemma.get(k)).toString())){
-                        putWord(lemma.get(k));
-                    }
-                }
-            }
-            else{
-                if(isWord(luceneMorph.getMorphInfo(lemma.get(0)).toString())){
-                    putWord(lemma.get(0));
-                }
-            }
-        }
 
         return lemmas;
     }
@@ -76,7 +64,32 @@ public class LemCreator {
         else{
             lemmas.put(word, 1);
         }
+    }
+    public HashMap<String, Integer> setLemmasCount(List<List<String>> lemWorkArray){
+        for(List<String> lemma: lemWorkArray){
+            if (lemma.size() > 1){
+                for(int k = 0; k < lemma.size() ; k++){
+                    if(isWord(getRussianMorhology().getMorphInfo(lemma.get(k)).toString())){
+                        putWord(lemma.get(k));
+                    }
+                }
+            }
+            else{
+                if(isWord(getRussianMorhology().getMorphInfo(lemma.get(0)).toString())){
+                    putWord(lemma.get(0));
+                }
+            }
+        }
+        return lemmas;
+    }
+    public LuceneMorphology getRussianMorhology()  {
+        LuceneMorphology luceneMorphology = null;
+        try {
+            luceneMorphology = new RussianLuceneMorphology();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-
+        return luceneMorphology;
     }
 }

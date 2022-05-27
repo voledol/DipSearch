@@ -34,24 +34,31 @@ public class HibernateController {
       * @return возвращает sessionFactory подключения Hibernate
      */
     public  SessionFactory getSessionFactory(){
-                Configuration configuration = new Configuration().configure();
-                configuration.setProperty("connection.driver_class", "com.mysql.cj.jdbc.Driver");
-                configuration.setProperty("connection.url", Main.propertyes.getSpring().getDatasource().getUrl());
-                configuration.setProperty("connection.password", Main.propertyes.getSpring().getDatasource().getPassword());
-                configuration.setProperty("connection.username", Main.propertyes.getSpring().getDatasource().getUsername());
-                configuration.setProperty("connection.pool-size", "20");
-                configuration.setProperty("dialect","org.hibernate.dialect.MySQL8Dialect");
-                configuration.setProperty("show_sql", "true");
-                configuration.setProperty("current_session_context_class", "thread");
-                configuration.setProperty("hbm2ddl.auto", Main.propertyes.getSpring().getJpa().getHibernate().getDdl_auto());
-                configuration.addAnnotatedClass(Field.class);
-                configuration.addAnnotatedClass(Index.class);
-                configuration.addAnnotatedClass(Lemma.class);
-                configuration.addAnnotatedClass(Page.class);
-                configuration.addAnnotatedClass(Site.class);
-                StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
-                sessionFactory = configuration.buildSessionFactory(builder.build());
+                StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
+                        .applySettings(setConfigurationPropertiesFromFile()
+                        .getProperties());
+                sessionFactory = setConfigurationPropertiesFromFile().buildSessionFactory(builder.build());
         return sessionFactory;
+    }
+    public Configuration setConfigurationPropertiesFromFile(){
+        Configuration configuration = new Configuration().configure();
+        configuration.configure();
+        configuration.setProperty("connection.driver_class", "com.mysql.cj.jdbc.Driver");
+        configuration.setProperty("connection.url", Main.propertyes.getSpring().getDatasource().getUrl());
+        configuration.setProperty("connection.password", Main.propertyes.getSpring().getDatasource().getPassword());
+        configuration.setProperty("connection.username", Main.propertyes.getSpring().getDatasource().getUsername());
+        configuration.setProperty("connection.pool-size", "20");
+        configuration.setProperty("dialect","org.hibernate.dialect.MySQL8Dialect");
+        configuration.setProperty("show_sql", "true");
+        configuration.setProperty("current_session_context_class", "thread");
+        configuration.setProperty("hbm2ddl.auto", Main.propertyes.getSpring().getJpa().getHibernate().getDdl_auto());
+        configuration.addAnnotatedClass(Field.class);
+        configuration.addAnnotatedClass(Index.class);
+        configuration.addAnnotatedClass(Lemma.class);
+        configuration.addAnnotatedClass(Page.class);
+        configuration.addAnnotatedClass(Site.class);
+        return configuration;
+
     }
 //    public synchronized void addEntity(Object entity){
 //

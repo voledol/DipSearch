@@ -50,23 +50,7 @@ public class Indexation {
                     }
                 }
                 for (Map.Entry<String, Integer> entry : bodyLemm.entrySet()) {
-                    Index index = new Index();
-                    Lemma lemma = new Lemma();
-
-                    lemma =lemmaDB.get("lemma", entry.getKey());
-                    if (lemma.getLemma() != null) {
-                        lemma.setFrequency(lemma.getFrequency() + entry.getValue());
-                        lemmaDB.update(lemma);
-                        index.setLemma_id(lemma.getId());
-                    } else {
-                        lemma.setLemma(entry.getKey());
-                        lemma.setFrequency(1);
-                        lemmaDB.add(lemma);
-                        lemmCount++;
-                        index.setLemma_id((lemmaDB.get("lemma", entry.getKey())).getId());
-                    }
-                    lemma.setSite_id(page.getSite_id());
-                    index.setPage_id(page.getId());
+                   Index index = indexCreator(page, entry.getKey(), entry.getValue());
                     index.setRank(rank.get(entry.getKey()));
                     indexListCRUD.add(index);
                 }
@@ -110,6 +94,27 @@ public class Indexation {
             correctUrl.append("/").append(split[i]);
         }
        return String.valueOf(correctUrl);
+    }
+    public Index indexCreator(Page page, String entry, Integer value){
+
+        Index index = new Index();
+        Lemma lemma = new Lemma();
+
+        lemma =lemmaDB.get("lemma", entry);
+        if (lemma.getLemma() != null) {
+            lemma.setFrequency(lemma.getFrequency() + value);
+            lemmaDB.update(lemma);
+            index.setLemma_id(lemma.getId());
+        } else {
+            lemma.setLemma(entry);
+            lemma.setFrequency(1);
+            lemmaDB.add(lemma);
+            lemmCount++;
+            index.setLemma_id((lemmaDB.get("lemma", entry)).getId());
+        }
+        lemma.setSite_id(page.getSite_id());
+        index.setPage_id(page.getId());
+        return index;
     }
 
 
