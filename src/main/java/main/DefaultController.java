@@ -58,7 +58,13 @@ public class DefaultController {
         JSONObject ans = new JSONObject();
         String[] urlSplit = url.split("/");
         String urlFin = urlSplit[0] + "//"+ urlSplit[1] + urlSplit[2];
-        if(Arrays.asList(sites).contains(urlFin)){
+        boolean containSite = false;
+        for(PropertyLoader.Site site: sites){
+            if(site.getName().contains(urlFin)){
+                containSite = true;
+            }
+        }
+        if(containSite){
             indexing.indexPage(url);
             ans.put("result","true");
 
