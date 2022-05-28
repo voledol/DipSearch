@@ -39,27 +39,45 @@ public class Indexation {
         if(page.getPath()==null) {
             page = pageDB.get("path", "/");
         }
-        try {
-                String indexPage =pageUrl;
-                titleLemm = lemCreator.getLem((connectSite.getContent("title")).toString());
-                bodyLemm = lemCreator.getLem(connectSite.getContent("body").toString());
-                HashMap<String, Float> rank = calculateLemmaRank(titleLemm, bodyLemm);
-                for (Map.Entry<String, Integer> entry : titleLemm.entrySet()) {
-                    if (bodyLemm.containsKey(entry.getKey())) {
-                        bodyLemm.put(entry.getKey(), entry.getValue() + bodyLemm.get(entry.getKey()));
-                    }
-                }
-                for (Map.Entry<String, Integer> entry : bodyLemm.entrySet()) {
-                   Index index = indexCreator(page, entry.getKey(), entry.getValue());
-                    index.setRank(rank.get(entry.getKey()));
-                    indexListCRUD.add(index);
-                }
-                titleLemm.clear();
-                bodyLemm.clear();
+        String indexPage =pageUrl;
+        titleLemm = lemCreator.getLem((connectSite.getContent("title")).toString());
+        bodyLemm = lemCreator.getLem(connectSite.getContent("body").toString());
+        HashMap<String, Float> rank = calculateLemmaRank(titleLemm, bodyLemm);
+        for (Map.Entry<String, Integer> entry : titleLemm.entrySet()) {
+            if (bodyLemm.containsKey(entry.getKey())) {
+                bodyLemm.put(entry.getKey(), entry.getValue() + bodyLemm.get(entry.getKey()));
+            }
+        }
+        for (Map.Entry<String, Integer> entry : bodyLemm.entrySet()) {
+           Index index = indexCreator(page, entry.getKey(), entry.getValue());
+            index.setRank(rank.get(entry.getKey()));
+            indexListCRUD.add(index);
+        }
+        titleLemm.clear();
+        bodyLemm.clear();
 
-        } catch (IOException  e) {
-            e.printStackTrace();
-        }}
+    }
+    public Index indexCreator(Page page, String entry, Integer value){
+
+        Index index = new Index();
+        Lemma lemma = new Lemma();
+
+        lemma =lemmaDB.get("lemma", entry);
+        if (lemma.getLemma() != null) {
+            lemma.setFrequency(lemma.getFrequency() + value);
+            lemmaDB.update(lemma);
+            index.setLemma_id(lemma.getId());
+        } else {
+            lemma.setLemma(entry);
+            lemma.setFrequency(1);
+            lemmaDB.add(lemma);
+            lemmCount++;
+            index.setLemma_id((lemmaDB.get("lemma", entry)).getId());
+        }
+        lemma.setSite_id(page.getSite_id());
+        index.setPage_id(page.getId());
+        return index;
+    }
     /**Функция расчета ранга леммы
      * @param bodyLemm - Леммы тела сайта
      * @param titleLemm - леммы заголовка сайта
@@ -95,27 +113,7 @@ public class Indexation {
         }
        return String.valueOf(correctUrl);
     }
-    public Index indexCreator(Page page, String entry, Integer value){
 
-        Index index = new Index();
-        Lemma lemma = new Lemma();
-
-        lemma =lemmaDB.get("lemma", entry);
-        if (lemma.getLemma() != null) {
-            lemma.setFrequency(lemma.getFrequency() + value);
-            lemmaDB.update(lemma);
-            index.setLemma_id(lemma.getId());
-        } else {
-            lemma.setLemma(entry);
-            lemma.setFrequency(1);
-            lemmaDB.add(lemma);
-            lemmCount++;
-            index.setLemma_id((lemmaDB.get("lemma", entry)).getId());
-        }
-        lemma.setSite_id(page.getSite_id());
-        index.setPage_id(page.getId());
-        return index;
-    }
 
 
 }

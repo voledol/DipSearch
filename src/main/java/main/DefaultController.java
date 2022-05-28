@@ -2,9 +2,7 @@ package main;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -37,9 +35,9 @@ public class DefaultController {
      * @return JSON file with result of starting indexing. true if indexation is started,
      * false if indexation don't started
      */
-    @RequestMapping("/api/startIndexing")
+    @GetMapping("/startIndexing")
     @ResponseBody
-    public JSONObject startIndexing() {
+    public JSONObject  startIndexing() {
         JSONObject ans = new JSONObject();
         ans.put("result", "true");
         for (int i = 0; i < sites.length - 1; i++) {
@@ -54,7 +52,7 @@ public class DefaultController {
      * @return JSON file with result of starting indexing. true if indexation is started,
      * false if indexation don't started
      */
-    @RequestMapping("/api/indexpage")
+    @PostMapping ("/indexpage")
     @ResponseBody
     public JSONObject indexingPage( String url){
         JSONObject ans = new JSONObject();
@@ -75,21 +73,21 @@ public class DefaultController {
     /** Function get statistic of system working from DB
      * @return JSON file with total and detailed statistic
      */
-    @RequestMapping("/api/statistics")
+    @GetMapping ("/statistics")
     @ResponseBody
     public JSONObject statistic(){
         DBstatistics stat = new DBstatistics();
         JSONObject ans = new JSONObject();
-        ans.put("result","true");
+        ans.put("result","true"); 
         ans.put("total" , stat.statistic());
-        ans.put("detailed", stat.detailedStatistic(sites));
+//        ans.put("detailed", stat.detailedStatistic(sites));
         return ans;
     }
-    @RequestMapping("/api/search")
+    @RequestMapping("/search")
     @ResponseBody
-    public JSONObject search(@RequestParam String query,@RequestParam String site,@RequestParam String offset,@RequestParam String limit){
+    public String search(@RequestParam String query,@RequestParam String site,@RequestParam String offset,@RequestParam String limit){
         JSONObject ans = searchSystem.find(query, site, offset, limit);;
-        return ans;
+        return ans.toString();
     }
 }
 

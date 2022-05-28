@@ -28,6 +28,7 @@ public class IndexController implements DBRepository<Index> {
         Transaction transaction = Main.sessionHibernate.beginTransaction();
         Main.sessionHibernate.save(entity);
         transaction.commit();
+        Main.sessionHibernate.clear();
     }
     /**
      * Function deleted Object from DB  {@link Index}
