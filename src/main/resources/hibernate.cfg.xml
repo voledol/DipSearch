@@ -1,5 +1,5 @@
 <!DOCTYPE hibernate-configuration PUBLIC
-        "-//main.HibernateController/main.HibernateController Configuration DTD 3.0//EN"
+        "-//project.controllers.HibernateController/project.controllers.HibernateController Configuration DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
@@ -19,10 +19,10 @@
         <!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto" >update</property>
 
-        <mapping class="model.Page"></mapping>
-        <mapping class="model.Field"></mapping>
-        <mapping class="model.Index"></mapping>
-        <mapping class="model.Lemma"></mapping>
-        <mapping class="model.Site"></mapping>
+        <mapping class="project.model.Page"></mapping>
+        <mapping class="project.model.Field"></mapping>
+        <mapping class="project.model.Index"></mapping>
+        <mapping class="project.model.Lemma"></mapping>
+        <mapping class="project.model.Site"></mapping>
     </session-factory>
 </hibernate-configuration>
