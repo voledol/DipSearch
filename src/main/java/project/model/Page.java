@@ -24,7 +24,7 @@ public class Page {
     /**Конструктор Page*/
     public Page(){
     }
-    /**Getters and setters*/
+    /*Getters and setters*/
     public int getId() {
         return id;
     }

@@ -1,7 +1,9 @@
-package project.controllers;
+package project.services;
 
 
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import project.controllers.LemCreator;
 import project.services.IndexServise;
 import project.services.LemmaServise;
 import project.services.PageServise;
@@ -17,9 +19,9 @@ import java.util.*;
  * @author VG
  * @version 0.1
  * **/
-@Controller
+@Service
 @RequiredArgsConstructor
-public class Indexation {
+public class IndexationService {
     public final LemCreator lemCreator = new LemCreator();
     public final SiteServise connectSite;
     public final PageServise pageServise;
@@ -34,8 +36,8 @@ public class Indexation {
      * **/
     public void indexPage(String  pageUrl) {
         connectSite.getConnection(pageUrl);
-        HashMap<String, Integer> titleLemm = new HashMap<>();
-        HashMap<String, Integer> bodyLemm = new HashMap<>();
+        Map<String, Integer> titleLemm;
+        Map<String, Integer> bodyLemm;
         String correctUrl = getCorrectUrl(pageUrl);
         Page page = pageServise.getPage(correctUrl, 0);
         if(page.getPath()==null) {
@@ -44,7 +46,7 @@ public class Indexation {
         String indexPage =pageUrl;
         titleLemm = lemCreator.getLem((connectSite.getContent("title")).toString());
         bodyLemm = lemCreator.getLem(connectSite.getContent("body").toString());
-        HashMap<String, Float> rank = calculateLemmaRank(titleLemm, bodyLemm);
+        Map<String, Float> rank = calculateLemmaRank(titleLemm, bodyLemm);
         for (Map.Entry<String, Integer> entry : titleLemm.entrySet()) {
             if (bodyLemm.containsKey(entry.getKey())) {
                 bodyLemm.put(entry.getKey(), entry.getValue() + bodyLemm.get(entry.getKey()));
@@ -84,11 +86,11 @@ public class Indexation {
      * @param titleLemm - леммы заголовка сайта
      * @return Возвращает список лемм с рачитанными рангами
      * */
-    public static HashMap<String, Float> calculateLemmaRank(HashMap<String, Integer> titleLemm, HashMap<String, Integer> bodyLemm){
+    public static Map<String, Float> calculateLemmaRank(Map<String, Integer> titleLemm, Map<String, Integer> bodyLemm){
         float rank;
         float tittleRank;
         float bodyRank;
-        HashMap<String, Float> lemmaRank = new HashMap<>();
+        Map<String, Float> lemmaRank = new HashMap<>();
         for(Map.Entry<String, Integer> entry: bodyLemm.entrySet()){
             if(titleLemm.containsKey(entry.getKey())){
                 tittleRank = titleLemm.get(entry.getKey());

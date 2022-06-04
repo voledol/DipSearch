@@ -2,7 +2,7 @@ package project;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import project.controllers.HibernateController;
+//import project.controllers.HibernateController;
 import project.model.Site;
 import org.hibernate.Session;
 import org.springframework.boot.SpringApplication;
@@ -21,8 +21,8 @@ import java.util.List;
 public class Main {
     /** Поле класса project.PropertyLoader {@link PropertyLoader}*/
     public static PropertyLoader propertyes = new PropertyLoader();
-    /**Поле класса HibernateController {@link HibernateController} */
-    public static HibernateController hibernateController = new HibernateController();
+//    /**Поле класса HibernateController {@link HibernateController} */
+//    public static HibernateController hibernateController = new HibernateController();
     /**Поле sessionHibernate*/
     public static Session sessionHibernate;
     /**Поле создания класса соединения с сайтом{@link SiteConnect}*/

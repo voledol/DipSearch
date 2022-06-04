@@ -1,5 +1,6 @@
-package project.controllers;
+package project.services;
 
+import org.springframework.stereotype.Service;
 import project.services.PageServise;
 import project.services.SiteServise;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,9 @@ import org.springframework.stereotype.Controller;
  * @author VG
  * @version 0.1
  * **/
-@Controller
+@Service
 @RequiredArgsConstructor
-public class PageCreator {
+public class PageCreatorService {
     public SiteServise connect;
     public final PageServise pageServise;
     public final SiteServise siteServise;

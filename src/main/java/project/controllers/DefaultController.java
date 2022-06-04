@@ -1,8 +1,11 @@
 package project.controllers;
+import dto.ResultDto;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import project.services.DBStatisticService;
+import project.services.IndexationService;
 import project.services.SiteServise;
 import project.model.Site;
 
@@ -13,20 +16,12 @@ import project.model.Site;
 @Controller
 @RequiredArgsConstructor
 public class DefaultController {
-    /**
-     * Field create new object of Indexation class {@link Indexation}
-     */
-    public final Indexation indexing;
+
+    public final IndexationService indexing;
     public final SearchSystemController searchSystem;
     public final SiteServise siteServise;
+    public final DBStatisticService dbStatisticService;
 
-    /**
-     * Field of start/stop indexing
-     */
-    public static boolean indexation = false;
-    /**
-     * Field assignments sites from application.yml to site massive
-     */
 
     @RequestMapping("/")
     public String index() {
@@ -76,16 +71,7 @@ public class DefaultController {
     /** Function get statistic of system working from DB
      * @return JSON file with total and detailed statistic
      */
-    @GetMapping ("/statistics")
-    @ResponseBody
-    public JSONObject statistic(){
-        DBstatisticsСontroller stat = new DBstatisticsСontroller();
-        JSONObject ans = new JSONObject();
-        ans.put("result","true"); 
-        ans.put("total" , stat.statistic());
-//        ans.put("detailed", stat.detailedStatistic(sites));
-        return ans;
-    }
+
     @RequestMapping("/search")
     @ResponseBody
     public String search(@RequestParam String query,@RequestParam String site,@RequestParam String offset,@RequestParam String limit){

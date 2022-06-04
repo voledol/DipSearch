@@ -2,6 +2,8 @@ package project.controllers;
 
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import project.services.IndexationService;
+import project.services.PageCreatorService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,12 +23,12 @@ class SiteMapper extends RecursiveTask<Set<Nodelink>> {
     private  Set<Nodelink> links = ConcurrentHashMap.newKeySet();
     /** Поле адрес сайта*/
     private   String SITE_URL;
-    /** Поле создания PageCreator {@link PageCreator}*/
+    /** Поле создания PageCreator {@link PageCreatorService}*/
     @Autowired
-    public PageCreator pageCreator;
-    /**Поле создания класса Indexation {@link Indexation}*/
+    public PageCreatorService pageCreator;
+    /**Поле создания класса Indexation {@link IndexationService}*/
     @Autowired
-    public Indexation idex;
+    public IndexationService idex;
     /**Конструктор класса SiteMapper
      * @param parent - родительская ссылка
      * @see Nodelink*/
