@@ -12,13 +12,13 @@ import java.io.Serializable;
 //@JsonInclude (JsonInclude.Include.NON_EMPTY)
 public class ResultDto implements Serializable {
     private Boolean result;
-    private String error;
+//    private String error;
     @JsonProperty ("statistics")
     private StatisticDto statisticDto;
 
     public static ResultDto getFalseResult (String error) {
         ResultDto dto = new ResultDto();
-        dto.setResult(true);
+        dto.setResult(false);
         dto.setStatisticDto(null);
         return dto;
     }

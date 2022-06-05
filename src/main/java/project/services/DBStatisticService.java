@@ -5,9 +5,12 @@ import dto.ResultDto;
 import dto.StatisticDto;
 import dto.TotalStatisticDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.model.Site;
+import project.model.SiteStatus;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +28,14 @@ public class DBStatisticService {
     private final LemmaServise lemmaServise;
     private final SiteServise siteServise;
 
-    public ResultDto getStatistic () {
+    public ResponseEntity<ResultDto> getStatistic () {
         try {
             ResultDto dto = new ResultDto();
+            dto.setResult(true);
             dto.setStatisticDto(getStatisticDto());
-            return dto;
+            return ResponseEntity.ok(dto);
         } catch (Exception e) {
-            return ResultDto.getFalseResult("Нет ответа от БД");
+            return ResponseEntity.ok(ResultDto.getFalseResult("Нет ответа от БД"));
         }
     }
 
@@ -40,19 +44,31 @@ public class DBStatisticService {
     }
 
     private TotalStatisticDto getTotalStatistic () {
-        return new TotalStatisticDto(0, 0, 0, true);
+        return new TotalStatisticDto(1, 0, 0, true);
     }
 //TODO
 // написать стрим, не через цикл
 
     private List<DetailedStatisticDto> getDetailedStatistic () {
-        List<Site> siteList = siteServise.siteRepository.findAll();
+//        List<Site> siteList = siteServise.siteRepository.findAll();
         List<DetailedStatisticDto> result = new ArrayList<>();
-        for (Site st : siteList) {
-            Integer pageCount = 0;
-            Integer lemmaCount = 0;
-            result.add(DetailedStatisticDto.getDto(st, pageCount, lemmaCount));
-        }
+        Site testSite = new Site();
+        testSite.setId(1);
+        testSite.setStatus(SiteStatus.INDEXED);
+        testSite.setLastError("none");
+        testSite.setName("test");
+        testSite.setUrl("http://generalpage.com");
+        testSite.setStatusTime(new Date(
+                102165
+        ));
+        Integer pageCount = 0;
+        Integer lemmaCount = 0;
+        result.add(DetailedStatisticDto.getDto(testSite, pageCount, lemmaCount));
+//        for (Site st : siteList) {
+//            Integer pageCount = 0;
+//            Integer lemmaCount = 0;
+//            result.add(DetailedStatisticDto.getDto(st, pageCount, lemmaCount));
+//        }
         return result;
     }
 
