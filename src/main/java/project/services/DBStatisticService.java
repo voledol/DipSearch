@@ -31,7 +31,7 @@ public class DBStatisticService {
     public ResponseEntity<ResultDto> getStatistic () {
         try {
             ResultDto dto = new ResultDto();
-            dto.setResult(true);
+            dto.setResult("true");
             dto.setStatisticDto(getStatisticDto());
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
@@ -44,7 +44,8 @@ public class DBStatisticService {
     }
 
     private TotalStatisticDto getTotalStatistic () {
-        return new TotalStatisticDto(1, 0, 0, true);
+        return new TotalStatisticDto(
+                10, 10, 10, true);
     }
 //TODO
 // написать стрим, не через цикл
@@ -61,8 +62,8 @@ public class DBStatisticService {
         testSite.setStatusTime(new Date(
                 102165
         ));
-        Integer pageCount = 0;
-        Integer lemmaCount = 0;
+        Integer pageCount = 100;
+        Integer lemmaCount = 100;
         result.add(DetailedStatisticDto.getDto(testSite, pageCount, lemmaCount));
 //        for (Site st : siteList) {
 //            Integer pageCount = 0;

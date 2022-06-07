@@ -13,5 +13,5 @@ public class TotalStatisticDto implements Serializable {
     private Integer pagesCount;
     private Integer lemmaCount;
     private Integer indexCount;
-    private Boolean indexing;
+    private boolean indexing;
 }

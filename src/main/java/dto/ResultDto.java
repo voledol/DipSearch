@@ -9,16 +9,17 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-//@JsonInclude (JsonInclude.Include.NON_EMPTY)
+@JsonInclude (JsonInclude.Include.NON_EMPTY)
 public class ResultDto implements Serializable {
-    private Boolean result;
-//    private String error;
+    @JsonProperty ("result")
+    private String result;
+    private String error;
     @JsonProperty ("statistics")
     private StatisticDto statisticDto;
 
     public static ResultDto getFalseResult (String error) {
         ResultDto dto = new ResultDto();
-        dto.setResult(false);
+        dto.setResult("true");
         dto.setStatisticDto(null);
         return dto;
     }
