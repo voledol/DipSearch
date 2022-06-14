@@ -3,10 +3,11 @@ package project;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 //import project.controllers.HibernateController;
-import project.model.Site;
-import org.hibernate.Session;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import project.model.Site;
+import project.model.SiteStatus;
+import project.services.SiteConnectService;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,23 +22,16 @@ import java.util.List;
 public class Main {
     /** Поле класса project.PropertyLoader {@link PropertyLoader}*/
     public static PropertyLoader propertyes = new PropertyLoader();
-//    /**Поле класса HibernateController {@link HibernateController} */
-//    public static HibernateController hibernateController = new HibernateController();
-    /**Поле sessionHibernate*/
-    public static Session sessionHibernate;
-    /**Поле создания класса соединения с сайтом{@link SiteConnect}*/
-    public static SiteConnect connect = new SiteConnect();
-    /**Поле подсчета добавленных в БД сайтов для индексации и поиска*/
-    public static List<Site> allowedSitesList = new ArrayList<>();
-    /***/
+    /**Поле создания класса соединения с сайтом{@link SiteConnectService}*/
+    public static List<Site> availableSites = new ArrayList<>();
+    public static PropertySiteSaver propertySiteSaver;
     public static void main(String[] args){
-       propertyes = applicationReader();
-//       sessionHibernate = hibernateController.getSessionFactory().openSession();
+       propertyes = readApplication();
        SpringApplication.run(Main.class, args);
     }
     /**Функция получения конфигурационных параметров из файла application.yml и добавления списка сайтов в БД
      * @return возвращает заполненный параметрами объект класса project.PropertyLoader {@link PropertyLoader}*/
-    public static PropertyLoader applicationReader (){
+    public static PropertyLoader readApplication (){
       ObjectMapper  mapper = new ObjectMapper(new YAMLFactory());
       mapper.findAndRegisterModules();
         try {
@@ -45,14 +39,13 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        for(project.PropertyLoader.Site st: propertyes.getAvalibleSites().getAvailableSites()){
-//            Site site = new Site();
-//            site.setUrl(st.getUrl());
-//            site.setName(st.getName());
-//            site.setStatus(SiteStatus.FAILED);
-//            siteCRUD.create(site);
-//            sitesCount++;
-//        }
+        for(project.PropertyLoader.Site st: propertyes.getAvailaibleSites().getAvailableSites()){
+            Site site = new Site();
+            site.setUrl(st.getUrl());
+            site.setName(st.getName());
+            site.setStatus(SiteStatus.FAILED.toString());
+            availableSites.add(site);
+        }
         return propertyes;
     }
 }

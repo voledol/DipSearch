@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class IndexServise {
+public class IndexService {
     public final IndexRepository indexRepository;
     public void save(Index index){
         indexRepository.save(index);
@@ -26,5 +26,8 @@ public class IndexServise {
     }
     public List<Index> findIndexListByLemmaId(Integer lemma_id){
         return indexRepository.findAllByLemmaid(lemma_id);
+    }
+    public long getIndexCount(){
+        return indexRepository.count();
     }
 }

@@ -1,41 +1,55 @@
 package project.model;
 
 import javax.persistence.*;
-/**Класс описывающий сущность Index
+
+/**
+ * Класс описывающий сущность Index
+ *
  * @author VG
  * @version 0.1
- * **/
+ **/
 @Entity
 @Table (name = "indexeslist")
-public class Index  {
-    /**Поле ID*/
+public class Index {
+    /**
+     * Поле ID
+     */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
 
     public int id;
-    /**Поле ID страницы*/
+    /**
+     * Поле ID страницы
+     */
     @Column (name = "page_id")
     public int pageid;
-    /**Поле Id леммы */
+    /**
+     * Поле Id леммы
+     */
     @Column (name = "lemma_id")
     public int lemmaid;
-    /**Поле ранга леммы*/
+    /**
+     * Поле ранга леммы
+     */
     @Column (name = "lemma_rank")
     public float rank;
-    /**Getters and setters*/
-    public int getId() {
+
+    /**
+     * Getters and setters
+     */
+    public int getId () {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId (int id) {
         this.id = id;
     }
 
-    public float getRank() {
+    public float getRank () {
         return rank;
     }
 
-    public void setRank(float rank) {
+    public void setRank (float rank) {
         this.rank = rank;
     }
 

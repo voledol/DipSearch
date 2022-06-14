@@ -17,10 +17,16 @@ public class ResultDto implements Serializable {
     @JsonProperty ("statistics")
     private StatisticDto statisticDto;
 
-    public static ResultDto getFalseResult (String error) {
+    public static ResultDto getFalseStatisticResult (String error) {
         ResultDto dto = new ResultDto();
         dto.setResult("true");
         dto.setStatisticDto(null);
+        return dto;
+    }
+    public static ResultDto getFalseIndexPageResult(){
+        ResultDto dto = new ResultDto();
+        dto.setResult("false");
+        dto.setError("Данная страница находится за пределами сайтов, указанных в конфигурационном файле");
         return dto;
     }
 }

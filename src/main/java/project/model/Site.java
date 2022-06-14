@@ -1,41 +1,63 @@
 package project.model;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
 import java.sql.Date;
-/**Класс описывающий сущность Site
+import java.util.Objects;
+
+/**
+ * Класс описывающий сущность Site
+ *
  * @author VG
  * @version 0.1
- * **/
+ **/
 @Entity
-@Table(name = "site")
+
+@Table (name = "site")
+@Getter
+@Setter
 public class Site {
-    /**Поле id*/
+    /**
+     * Поле id
+     */
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private int id;
-    /**Поле статуса сайта*/
-    private SiteStatus status;
-    /**Поле времени последнего обновления статуса сайта*/
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    private Integer id;
+    /**
+     * Поле статуса сайта
+     */
+    private String status;
+    /**
+     * Поле времени последнего обновления статуса сайта
+     */
     @Column (name = "status_time")
     private Date statusTime;
-    /**Поле последняя ошибка индексации*/
+    /**
+     * Поле последняя ошибка индексации
+     */
     @Column (name = "last_error")
     private String lastError;
-    /**Поле адрес сайта*/
+    /**
+     * Поле адрес сайта
+     */
     private String url;
-    /**Поле имя сайта*/
+    /**
+     * Поле имя сайта
+     */
     private String name;
-    /**Getters and setters*/
-    public int getId() {return id;}
-    public void setId(int id) {this.id = id;}
-    public SiteStatus getStatus() {return status;}
-    public void setStatus(SiteStatus status) {this.status = status;}
-    public Date getStatusTime () {return statusTime;}
-    public void setStatusTime (Date statusTime) {this.statusTime = statusTime;}
-    public String getLastError () {return lastError;}
-    public void setLastError (String lastError) {this.lastError = lastError;}
-    public String getUrl() {return url;}
-    public void setUrl(String url) {this.url = url;}
-    public String getName() {return name;}
-    public void setName(String name) {this.name = name;}
+    @Override
+    public boolean equals (Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Site site = (Site) o;
+        return Objects.equals(url, site.url);
+    }
+
+    @Override
+    public int hashCode () {
+        return Objects.hash(id, status, statusTime, lastError, url, name);
+    }
 }

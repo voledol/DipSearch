@@ -1,4 +1,4 @@
-package project.controllers;
+package project;
 
 import java.util.Objects;
 import java.util.Set;

@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class Lemma implements Comparable<Lemma>{
     /**Поле id*/
     @Id
-    @GeneratedValue (strategy = GenerationType.AUTO)
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     public int id;
     /**Поле лемма*/
     @Column (name = "lemma")

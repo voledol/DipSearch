@@ -1,5 +1,8 @@
 //package project.controllers;
 //
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.web.bind.annotation.RestController;
+//import project.services.IndexationService;
 //import project.services.PageServise;
 //import org.json.JSONObject;
 //import org.springframework.stereotype.Controller;
@@ -7,17 +10,15 @@
 //import org.springframework.web.bind.annotation.RequestMapping;
 //
 //@Controller
+//@RequiredArgsConstructor
 //public class IndexController {
-//    public final PageServise indexservice;
+//    public final PageServise pageServise;
+//    public final IndexationService indexationService;
 //
-//    public IndexController (PageServise indexservice) {
-//        this.indexservice = indexservice;
-//    }
 //    @RequestMapping
-//    @PostMapping("/indexpage")
-//    public JSONObject getPage(String path, Integer site_id){
-//        System.out.println( "Страница найдена " + indexservice.getPage(path, site_id));
-//       ;
+//    @PostMapping("/indexPage")
+//    public JSONObject indexPage(String path){
+//        indexationService.indexPage(path);
 //        return new JSONObject();
 //    }
 //}

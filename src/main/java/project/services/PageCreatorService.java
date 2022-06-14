@@ -1,13 +1,14 @@
 package project.services;
 
+import lombok.SneakyThrows;
+import org.jsoup.Connection;
+import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
-import project.services.PageServise;
-import project.services.SiteServise;
 import lombok.RequiredArgsConstructor;
 import project.model.Page;
 import project.model.Site;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Controller;
+import project.repositoryes.SiteConnection;
 
 
 /**
@@ -18,39 +19,35 @@ import org.springframework.stereotype.Controller;
 @Service
 @RequiredArgsConstructor
 public class PageCreatorService {
-    public SiteServise connect;
     public final PageServise pageServise;
-    public final SiteServise siteServise;
+    public final SiteConnection siteConnection;
+    public final SiteService siteService;
 
      /**Функция создания объекта класса Page {@link Page} по данным полученным со странци сайта
       * @param url - url страницы сайта*
       * @return возваращает объект класса Page {@link Page}
       */
+         @SneakyThrows
          public  Page createPage(String url){
+             Connection.Response response = siteConnection.getConnection(url);
          Page page = new Page();
-               connect.getConnection(url);
                     String[] urlSplit = url.split("/");
                     String urlFin = urlSplit[0] + "//"+ urlSplit[1] + urlSplit[2];
-                    Elements content = connect.getContent("html");
+                    Elements content = siteConnection.getContent("html");
                     page.setPath(url.replaceAll(urlFin,""));
                     if(page.getPath().isEmpty()){
                         page.setPath("/");
                     }
                     page.setContent(content.text().replaceAll("'",""));
-                    page.setCode(connect.response.statusCode());
+                    page.setCode(response.statusCode());
                     page.setSiteId(getSiteId(url));
                     pageServise.savePage(page);
-
                return page;
     }
 
-    /**
-     * @return количество созданных страниц за вермя работы
-     */
-
     public int getSiteId(String url){
         int id = 0;
-        for(Site str: siteServise.getAllSites()){
+        for(Site str: siteService.getAllSites()){
             if(url.contains(str.getUrl())){
                 id = str.getId();
             }

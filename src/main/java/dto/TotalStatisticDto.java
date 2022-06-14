@@ -1,5 +1,6 @@
 package dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,8 +11,12 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 public class TotalStatisticDto implements Serializable {
-    private Integer pagesCount;
-    private Integer lemmaCount;
-    private Integer indexCount;
-    private boolean indexing;
+    @JsonProperty("pages")
+    private Long pagesCount;
+    @JsonProperty("lemmas")
+    private Long lemmaCount;
+    @JsonProperty("sites")
+    private Long sites;
+    @JsonProperty("isIndexing")
+    private Boolean indexing;
 }

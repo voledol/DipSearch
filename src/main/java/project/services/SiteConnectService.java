@@ -1,5 +1,6 @@
-package project;
+package project.services;
 
+import org.springframework.stereotype.Service;
 import project.repositoryes.SiteConnection;
 import lombok.SneakyThrows;
 import org.jsoup.Connection;
@@ -12,7 +13,8 @@ import java.io.IOException;
 /**
  * Класс выполнящий соедиение с сайтом
  */
-public class SiteConnect implements SiteConnection {
+@Service
+public class SiteConnectService implements SiteConnection {
 public Connection.Response response;
 
     /** функция выполняющая соединение с сайтом
@@ -35,22 +37,27 @@ public Connection.Response response;
         }
         return response;
     }
-
     /** функция получения коонтента со страницы по тегу сселектору
      * @param selector - селектор тег html страницы
      * @return - возвращает выбранный по тегу контент страницы
      */
-    @SneakyThrows
     @Override
-    public Elements getContent(String selector) {
+    public Elements getContent (String selector) {
         Elements content = new Elements();
         try{
            Document doc = response.parse();
-           content = doc.select("html");
+           content = doc.select(selector);
         }
         catch (Exception e ){
             e.printStackTrace();
         }
         return content;
     }
+
+    @Override
+    public String getContentWithSelector (String selector, Document doc) {
+        return doc.select(selector).toString();
+    }
+
+
 }

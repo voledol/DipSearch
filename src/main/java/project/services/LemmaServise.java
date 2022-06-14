@@ -32,4 +32,22 @@ public class LemmaServise {
         }
         return lemmaList;
     }
+    public long getLemmaCount(){
+        return lemmaRepository.count();
+    }
+    public List<Lemma> getLemmaListBySiteId (Integer site_id){
+        return lemmaRepository.findAllBySiteid(site_id);
+    }
+    public Integer getLemmaCountBySiteID(Integer site_id){
+        Integer lemmaCount;
+        List<Lemma> lemmaList = getLemmaListBySiteId(site_id);
+        if(lemmaList==null){
+            lemmaCount =0;
+
+        }
+        else {
+            lemmaCount = lemmaList.size();
+        }
+        return lemmaCount;
+    }
 }

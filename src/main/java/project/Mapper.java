@@ -1,4 +1,4 @@
-package project.controllers;
+package project;
 
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;

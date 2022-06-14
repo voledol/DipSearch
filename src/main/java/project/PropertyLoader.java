@@ -18,7 +18,7 @@ public class PropertyLoader {
      * Поле AAvailableSites {@link AvailableSites}
      */
     @JsonProperty ("available-sites")
-    private AvailableSites avalibleSites;
+    private AvailableSites availableSites;
 
     /**
      * Getters and setters
@@ -31,12 +31,12 @@ public class PropertyLoader {
         this.spring = spring;
     }
 
-    public AvailableSites getAvalibleSites () {
-        return avalibleSites;
+    public AvailableSites getAvailaibleSites () {
+        return availableSites;
     }
 
-    public void setAvalibleSites (AvailableSites avalibleSites) {
-        this.avalibleSites = avalibleSites;
+    public void setAvailaibleSites (AvailableSites availaibleSites) {
+        this.availableSites = availaibleSites;
     }
 
     /**
@@ -174,17 +174,17 @@ public class PropertyLoader {
          * Поле доступных для индексации и поиска сайтов
          */
         @JsonProperty ("sites")
-        Site[] avalibleSites;
+        Site[] availableSites;
 
         /**
          * Getters and setters
          */
         public Site[] getAvailableSites () {
-            return avalibleSites;
+            return availableSites;
         }
 
         public void setAvailableSites (Site[] avalibleSites) {
-            this.avalibleSites = avalibleSites;
+            this.availableSites = avalibleSites;
         }
     }
 

@@ -1,10 +1,8 @@
-package project.controllers;
+package project.services;
 
 
-import org.springframework.stereotype.Controller;
-import project.services.IndexServise;
-import project.services.LemmaServise;
-import project.services.PageServise;
+import org.springframework.stereotype.Service;
+import project.LemCreator;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,12 +19,12 @@ import java.util.regex.Pattern;
  * @author VG
  * @version 0.1
  */
-@Controller
+@Service
 @RequiredArgsConstructor
-public class SearchSystemController {
+public class SearchSystemService {
     public final PageServise pageServise;
     public final LemmaServise lemmaServise;
-    public final IndexServise indexServise;
+    public final IndexService indexService;
     private LemCreator lemCreator = new LemCreator();
 
     public  JSONObject find(String searchRequest, String site, String offset, String limit){
@@ -58,7 +56,7 @@ public class SearchSystemController {
         lemsOfSearchRequest = lemCreator.getLem(searchRequest);
         lemsFromDB = lemmaServise.findLemmaList(lemsOfSearchRequest);
         Collections.sort(lemsFromDB);
-        List<Index> ind = indexServise.findIndexListByLemmaId(lemsFromDB.get(0).getId());
+        List<Index> ind = indexService.findIndexListByLemmaId(lemsFromDB.get(0).getId());
         for(int i =1; i < lemsFromDB.size();i++){
             ind = removePages(lemsFromDB.get(i), ind);
         }
@@ -88,7 +86,7 @@ public class SearchSystemController {
     public  float relevance(int page_id, List<Lemma> lems){
         float rank = 0;
         for(Lemma lemma: lems){
-            Index index = indexServise.findIndexByPage_idAndLemm_id(page_id, lemma.getId());
+            Index index = indexService.findIndexByPage_idAndLemm_id(page_id, lemma.getId());
             rank += index.rank;
         }
         return rank;
@@ -96,7 +94,7 @@ public class SearchSystemController {
     public  List<Index> removePages(Lemma lem, List<Index> ind){
         List<Index> finPages = new ArrayList<>();
         for(Index index: ind){
-            List<Index> pagesId = indexServise.findIndexListByPageId(index.getPageid());
+            List<Index> pagesId = indexService.findIndexListByPageId(index.getPageid());
             for(Index page: pagesId){
                 if(page.getLemmaid()!= lem.getId()){
                     continue;
