@@ -1,13 +1,11 @@
 package project.services;
 
 
-import com.sun.xml.bind.v2.TODO;
-import dto.ResultDto;
+import dto.ResultIndexing;
+import dto.ResultStatisticDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.LemCreator;
@@ -17,10 +15,8 @@ import project.model.Page;
 import project.model.Site;
 import project.repositoryes.SiteConnection;
 
-import javax.lang.model.util.Elements;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ForkJoinPool;
 
 /**
  * Класс построничной индексации сайта
@@ -38,6 +34,7 @@ public class IndexationService {
     public final IndexService indexService;
     public final PageCreatorService pageCreatorService;
     public final SiteConnection siteConnection;
+    public final MapperService mapperService;
 
 
     /**
@@ -45,15 +42,15 @@ public class IndexationService {
      *
      * @param pageUrl - Адресс страницы в установленном формате
      **/
-    public ResponseEntity<ResultDto> indexPageRequest(String pageUrl){
-        ResultDto dto = new ResultDto();
+    public ResponseEntity<ResultStatisticDto> indexPageRequest(String pageUrl){
+        ResultStatisticDto dto = new ResultStatisticDto();
         if(isInSearchField(pageUrl)){
             pageCreatorService.createPage(pageUrl);
             indexPage(pageUrl);
             dto.setResult("true");
             return ResponseEntity.ok(dto);
         }
-        return ResponseEntity.ok(ResultDto.getFalseIndexPageResult());
+        return ResponseEntity.ok(ResultStatisticDto.getFalseIndexPageResult());
     }
     @SneakyThrows
     public void indexPage (String pageUrl) {
@@ -167,6 +164,25 @@ public class IndexationService {
             }
         }
         return 0;
+    }
+    public ResultIndexing startTotalIndexing(){
+        List<Site> sites = siteService.getAllSites();
+        List<MapperService> sitesForIndexing = new ArrayList<>();
+        for(Site st: sites){
+            mapperService.
+            MapperService indexingSiteToList = new MapperService(new Nodelink(st.getUrl()));
+            sitesForIndexing.add(indexingSiteToList);
+        }
+        invoke(sitesForIndexing);
+        ResultIndexing resultIndexing = new ResultIndexing();
+        resultIndexing.setResult("true");
+        resultIndexing.setError("nonError");
+        return resultIndexing;
+    }
+    public void invoke(List<MapperService> siteMappers){
+        for(MapperService siteMapper: siteMappers){
+            new ForkJoinPool(2, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true).invoke(siteMapper);
+        }
     }
 
 

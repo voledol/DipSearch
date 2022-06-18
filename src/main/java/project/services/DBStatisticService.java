@@ -1,7 +1,7 @@
 package project.services;
 
 import dto.DetailedStatisticDto;
-import dto.ResultDto;
+import dto.ResultStatisticDto;
 import dto.StatisticDto;
 import dto.TotalStatisticDto;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +27,14 @@ public class DBStatisticService {
     private final LemmaServise lemmaServise;
     private final SiteService siteServise;
 
-    public ResponseEntity<ResultDto> getStatistic () {
+    public ResponseEntity<ResultStatisticDto> getStatistic () {
         try {
-            ResultDto dto = new ResultDto();
+            ResultStatisticDto dto = new ResultStatisticDto();
             dto.setResult("true");
             dto.setStatisticDto(getStatisticDto());
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
-            return ResponseEntity.ok(ResultDto.getFalseStatisticResult("Нет ответа от БД"));
+            return ResponseEntity.ok(ResultStatisticDto.getFalseStatisticResult("Нет ответа от БД"));
         }
     }
 

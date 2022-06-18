@@ -1,15 +1,16 @@
 package project.services;
 
 
+import dto.ResultPageDto;
+import dto.ResultSearchDto;
+import lombok.SneakyThrows;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.LemCreator;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import project.model.Index;
 import project.model.Lemma;
 import project.model.Page;
-import project.model.ResultPage;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -25,71 +26,63 @@ public class SearchSystemService {
     public final PageServise pageServise;
     public final LemmaServise lemmaServise;
     public final IndexService indexService;
+    public final SiteService siteService;
+    public final SiteConnectService siteConnectService;
     private LemCreator lemCreator = new LemCreator();
 
-    public  JSONObject find(String searchRequest, String site, String offset, String limit){
-        JSONObject result = new JSONObject();
-        int offsetInt;
-        int limitInt;
-        int site_id;
-        if(site.isEmpty()){
-            site_id = 0;
-        }
-        else{
-            site_id = Integer.parseInt(site);
-        }
-        if(offset.isEmpty()){
-            offsetInt = 0;
-        }
-        else{
-            offsetInt = Integer.parseInt(offset);
-        }
-        if (limit.isEmpty()){
-            limitInt = 20;
-        }
-        else{
-            limitInt = Integer.parseInt(limit);
-        }
-        JSONArray results = new JSONArray();
-        HashMap<String, Integer> lemsOfSearchRequest = new HashMap<>();
-        List<Lemma> lemsFromDB = new ArrayList<>();
-        lemsOfSearchRequest = lemCreator.getLem(searchRequest);
-        lemsFromDB = lemmaServise.findLemmaList(lemsOfSearchRequest);
-        Collections.sort(lemsFromDB);
-        List<Index> ind = indexService.findIndexListByLemmaId(lemsFromDB.get(0).getId());
-        for(int i =1; i < lemsFromDB.size();i++){
-            ind = removePages(lemsFromDB.get(i), ind);
-        }
-        for (Index index: ind){
-            ResultPage resultPage = new ResultPage();
-            Page page = pageServise.getPageById(index.getPageid()).get();
-            if(page.getId()==site_id){resultPage.setSite_id(page.getSiteId());}
-            else{continue;}
-            resultPage.setUrl(page.getPath());
-            resultPage.setTitle();
-            resultPage.setSnippet(getSnippet(page.getContent(), searchRequest));
-            resultPage.setRelevance(relevance(index.getPageid(), lemsFromDB));
-            results.put(resultPage);
+    public ResponseEntity<ResultSearchDto> find(String searchRequest, String site, String offset, String limit){
 
+        HashMap<String, Integer> lemmsOfSearchRequest = new HashMap<>();
+        List<Lemma> lemmsFromDB = new ArrayList<>();
+        lemmsOfSearchRequest = lemCreator.getLem(searchRequest);
+        lemmsFromDB = lemmaServise.findLemmaList(lemmsOfSearchRequest);
+        Collections.sort(lemmsFromDB);
+        List<Index> ind = indexService.findIndexListByLemmaId(lemmsFromDB.get(0).getId());
+        for(int i =1; i < lemmsFromDB.size();i++){
+            ind = removePages(lemmsFromDB.get(i), ind);
         }
+        ResultSearchDto result = new ResultSearchDto();
+        List<ResultPageDto> results = getResultList(ind, searchRequest,lemmsFromDB);
         if(results.isEmpty()){
-            result.put("result",false);
-            result.put("error","задан пустой поисковой запрос");
-            return result;
+            result.setResult("false");
+            result.setError("error задан пустой поисковой запрос");
+            return ResponseEntity.ok(result);
         }
-        result.put("result", true);
-        result.put("count", results.length());
-        JSONArray resultsList = new JSONArray();
-        result.put("data", resultsList);
-        return result;
+        result.setResult("true");
+        result.setCount("" + results.size());
+
+        result.setData(results);
+        return ResponseEntity.ok(result);
     }
-    public  float relevance(int page_id, List<Lemma> lems){
-        float rank = 0;
+    public  Double relevance(int page_id, List<Lemma> lems){
+        Double rank = 0.0;
         for(Lemma lemma: lems){
             Index index = indexService.findIndexByPage_idAndLemm_id(page_id, lemma.getId());
             rank += index.rank;
         }
         return rank;
+    }
+    //тут мне не нравится
+    @SneakyThrows
+    public List<ResultPageDto>getResultList(List<Index> ind, String searchRequest, List<Lemma> lemmsFromDB){
+        List<ResultPageDto> results = new ArrayList<>();
+        for (Index index: ind){
+            ResultPageDto resultPage = new ResultPageDto();
+            Page page = pageServise.getPageById(index.getPageid()).get();
+            String siteName = getSiteName(page);
+            String siteUrl = getSiteUrl(page);
+            resultPage.setSiteName(siteName);
+            resultPage.setSite(siteUrl);
+            resultPage.setUrl(page.getPath());
+            resultPage.setTitle(siteConnectService.getConnection(siteUrl + page.getPath())
+                    .parse()
+                    .select("title").toString());
+            resultPage.setSnippet(getSnippet(page.getContent(), searchRequest));
+            resultPage.setRelevance(relevance(page.getId(), lemmsFromDB));
+            results.add(resultPage);
+
+        }
+        return results;
     }
     public  List<Index> removePages(Lemma lem, List<Index> ind){
         List<Index> finPages = new ArrayList<>();
@@ -110,7 +103,7 @@ public class SearchSystemService {
     public String getSnippet(String content, String searchRequest) {
         String snippet = "";
         String[] wordList = searchRequest.split(" ");
-        String regString = "(("+wordList[0]+")([\\s\\S]+?)("+wordList[wordList.length]+"))";
+        String regString = "(("+wordList[0]+")([\\s\\S]+?)("+wordList[wordList.length -1]+"))";
         Pattern pattern = Pattern.compile(regString);
         Matcher matcher = pattern.matcher(content);
         if(matcher.find()){
@@ -121,5 +114,11 @@ public class SearchSystemService {
         }
 
         return snippet;
+    }
+    public String getSiteName(Page page){
+        return siteService.getSiteById(page.getSiteId()).get().getName();
+    }
+    public String getSiteUrl(Page page){
+        return siteService.getSiteById(page.getSiteId()).get().getUrl();
     }
 }

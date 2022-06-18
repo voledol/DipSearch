@@ -1,4 +1,4 @@
-package project;
+package project.services;
 
 import java.util.Objects;
 import java.util.Set;

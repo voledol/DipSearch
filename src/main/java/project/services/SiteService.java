@@ -1,19 +1,14 @@
 package project.services;
 
 import lombok.RequiredArgsConstructor;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import project.Main;
 import project.model.Site;
 import project.repositoryes.PageRepository;
-import project.repositoryes.SiteConnection;
 import project.repositoryes.SiteRepository;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +44,10 @@ public class SiteService {
 
 
     }
+    public Optional<Site> getSiteById(Integer id){
+        return siteRepository.findById(id);
+    }
+
 
 
 }

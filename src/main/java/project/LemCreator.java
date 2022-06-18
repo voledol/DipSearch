@@ -32,12 +32,14 @@ public class LemCreator {
      * @return возвращает список лемм полученны из текстовой части сайта
      */
     public HashMap<String, Integer> getLem (String text) {
-        List<List<String>> lemWorkArray = new ArrayList<>();
-        String[] words = text.toLowerCase()
-                .replaceAll("[A-z]", "")
-                .replaceAll("[^\\p{L}\\p{Z}]+", "").replaceAll("[^А-я,\\s]", "")
-                .split("\\s");
+        String[] words = new String[0];
+            words = text.toLowerCase()
+                    .replaceAll("[A-z]", "")
+                    .replaceAll("[^\\p{L}\\p{Z}]+", "").replaceAll("[^А-я,\\s]", "")
+                    .split("\\s");
 
+
+        List<List<String>> lemWorkArray = new ArrayList<>();
         for (int i = 0; i < words.length - 1; i++) {
 
             if (words[i].isEmpty()) {
@@ -46,7 +48,6 @@ public class LemCreator {
                 lemWorkArray.add(luceneMorphology.getNormalForms(words[i]));
 
             }
-
 
         }
         lemmas = setLemmasCount(lemWorkArray);
