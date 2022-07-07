@@ -6,6 +6,7 @@ import dto.ResultStatisticDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Node;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.LemCreator;
@@ -16,6 +17,7 @@ import project.model.Site;
 import project.repositoryes.SiteConnection;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -33,8 +35,7 @@ public class IndexationService {
     public final LemmaServise lemmaServise;
     public final IndexService indexService;
     public final PageCreatorService pageCreatorService;
-    public final SiteConnection siteConnection;
-    public final MapperService mapperService;
+    public final SiteConnectService siteConnection;
 
 
     /**
@@ -53,25 +54,30 @@ public class IndexationService {
         return ResponseEntity.ok(ResultStatisticDto.getFalseIndexPageResult());
     }
     @SneakyThrows
-    public void indexPage (String pageUrl) {
+    public synchronized void indexPage (String pageUrl) {
         Document document = siteConnection.getConnection(pageUrl).parse();
-        Map<String, Integer> titleLemma;
-        Map<String, Integer> bodyLemma;
+        Map<String, Integer> titleLemma = new HashMap<>();
+        Map<String, Integer> bodyLemma = new HashMap<>();
         String correctUrl = getCorrectUrl(pageUrl);
         Integer site_id = getSiteId(pageUrl);
         Page page = pageServise.getPage(correctUrl, site_id);
         titleLemma = lemCreator.getLem(siteConnection.getContentWithSelector("title", document));
+        System.out.println(titleLemma);
         bodyLemma = lemCreator.getLem(siteConnection.getContentWithSelector("body", document));
+
+        System.out.println(bodyLemma);
         Map<String, Float> rank = calculateLemmaRank(titleLemma, bodyLemma);
         for (Map.Entry<String, Integer> entry : titleLemma.entrySet()) {
             if (bodyLemma.containsKey(entry.getKey())) {
                 bodyLemma.put(entry.getKey(), entry.getValue() + bodyLemma.get(entry.getKey()));
             }
         }
-        for (Map.Entry<String, Integer> entry : bodyLemma.entrySet()) {
-            Index index = indexCreator(page, entry.getKey(), entry.getValue());
-            index.setRank(rank.get(entry.getKey()));
-            indexService.save(index);
+        synchronized (bodyLemma.entrySet()){
+            for (Map.Entry<String, Integer> entry : bodyLemma.entrySet()) {
+                Index index = indexCreator(page, entry.getKey(), entry.getValue());
+                index.setRank(rank.get(entry.getKey()));
+                indexService.save(index);
+            }
         }
         titleLemma.clear();
         bodyLemma.clear();
@@ -93,7 +99,7 @@ public class IndexationService {
             lemma = new Lemma();
             lemma.setLemma(entry);
             lemma.setFrequency(1);
-            lemma.setSiteid(page.getId());
+            lemma.setSiteid(page.getSiteId());
             lemmaServise.addLemma(lemma);
             index.setLemmaid((lemmaServise.getLemmaByName(entry)).getId());
         }
@@ -164,25 +170,6 @@ public class IndexationService {
             }
         }
         return 0;
-    }
-    public ResultIndexing startTotalIndexing(){
-        List<Site> sites = siteService.getAllSites();
-        List<MapperService> sitesForIndexing = new ArrayList<>();
-        for(Site st: sites){
-            mapperService.
-            MapperService indexingSiteToList = new MapperService(new Nodelink(st.getUrl()));
-            sitesForIndexing.add(indexingSiteToList);
-        }
-        invoke(sitesForIndexing);
-        ResultIndexing resultIndexing = new ResultIndexing();
-        resultIndexing.setResult("true");
-        resultIndexing.setError("nonError");
-        return resultIndexing;
-    }
-    public void invoke(List<MapperService> siteMappers){
-        for(MapperService siteMapper: siteMappers){
-            new ForkJoinPool(2, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true).invoke(siteMapper);
-        }
     }
 
 

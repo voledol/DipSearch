@@ -3,65 +3,62 @@ package project.services;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-/**Класс описывающий узловые ссылки сайта
+
+/**
+ * Класс описывающий узловые ссылки сайта
+ *
  * @author VG
  * @version 0.1
- * **/
+ **/
 public class Nodelink implements Comparable<Nodelink> {
-    /**Поле адреса страницы*/
+
     private final String url;
-    /**Поле родительского объекта NodeLink*/
+
     private final Nodelink parent;
-    /**Поле "глубины" ссылки относительно главной страницы*/
+
     private final int depth;
-    /**Полесписок ссылок содержащихся на страницу*/
+
     private Set<Nodelink> subLinks = ConcurrentHashMap.newKeySet();
 
-    /**Конструктор класса NodeLink
-     * @param url - адресс страницы*/
-    public Nodelink(String url) {
+
+    public Nodelink (String url) {
         this.url = url;
         this.depth = 0;
         this.parent = null;
     }
-    /**Конструктор класса NodeLink
-     * @param url - адресс страницы
-     * @param parent - обект родитель */
-    public Nodelink(String url, Nodelink parent) {
+
+
+    public Nodelink (String url, Nodelink parent) {
         this.url = url;
         this.depth = parent.getDepth() + 1;
         this.parent = parent;
     }
-    /**Функция добавления сслыки содержищейся на странице в список
-     * @param subLink - ссылка содержащаяся на странице*/
-    public synchronized void addSubLink(Nodelink subLink) {
+
+
+    public synchronized void addSubLink (Nodelink subLink) {
         this.subLinks.add(subLink);
     }
-    /**Getters and setters*/
-    public Set<Nodelink> getSubLinks() {
+
+
+    public Set<Nodelink> getSubLinks () {
         return subLinks;
     }
 
-    public Nodelink getParent() {
+    public Nodelink getParent () {
         return parent;
     }
 
-    public int getDepth() {
+    public int getDepth () {
         return depth;
     }
 
-    public String getUrl() {
+    public String getUrl () {
         return url;
     }
-    /**функция сравнения "глубины" ссылки*
-     * @param node - объект класса  NodeLink
-     * @return -1  если NodeLink#parent = null, node == NodeLink
-     * NodeLink#deth more then node$deth
-     * 1 если node#parent = null, NodeLink#parent == node#parent
-     *      * NodeLink#deth less then node$depth
-     */
+
+
     @Override
-    public int compareTo(Nodelink node) {
+    public int compareTo (Nodelink node) {
         if (this.getParent() == null) return -1;
         if (node.getParent() == null) return 1;
         if (node.getParent().equals(this)) return -1;
@@ -76,12 +73,10 @@ public class Nodelink implements Comparable<Nodelink> {
             return (this.getDepth() > node.getDepth()) ? this.getParent().compareTo(node) : this.compareTo(node.getParent());
         }
     }
-    /**Функция определния  равенства ссылок
-     * @param o - объект сравнения с текущим объектов
-     * @return true если ссылки равны
-     * false если не равны*/
+
+
     @Override
-    public boolean equals(Object o) {
+    public boolean equals (Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -89,14 +84,14 @@ public class Nodelink implements Comparable<Nodelink> {
 
         return Objects.equals(url, node.url);
     }
-    /**Функция определнрия hachcode*/
+
     @Override
-    public int hashCode() {
+    public int hashCode () {
         return url != null ? url.hashCode() : 0;
     }
-    /**Функция вывода в строку объекта NodeLink*/
+
     @Override
-    public String toString() {
+    public String toString () {
         StringBuilder result = new StringBuilder();
         result.append("\t".repeat(Math.max(0, this.getDepth())));
         return result.append(this.getUrl()).toString();

@@ -24,6 +24,7 @@ public class Main {
     public static PropertyLoader propertyes = new PropertyLoader();
     /**Поле создания класса соединения с сайтом{@link SiteConnectService}*/
     public static List<Site> availableSites = new ArrayList<>();
+    public static Boolean isIndexationRunning = false;
     public static void main(String[] args){
        propertyes = readApplication();
        SpringApplication.run(Main.class, args);

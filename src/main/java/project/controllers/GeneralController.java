@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import project.services.DBStatisticService;
-import project.services.IndexationService;
-import project.services.SearchSystemService;
-import project.services.SiteService;
+import project.services.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,6 +21,7 @@ public class GeneralController {
     private final SiteService siteService;
     public final IndexationService indexationService;
     public final SearchSystemService searchSystemService;
+    public final TotalIndexationService totalIndexationService;
 
     @GetMapping ("/statistics")
     @ResponseBody
@@ -43,9 +41,14 @@ public class GeneralController {
         return searchSystemService.find(request, site, offset, limit );
 
     }
-    @GetMapping ("startIndexing")
+    @GetMapping ("/startIndexing")
     @ResponseBody
     public ResponseEntity<ResultIndexing> startIndexing(){
-        return ResponseEntity.ok(indexationService.startTotalIndexing());
+        return ResponseEntity.ok(totalIndexationService.startTotalIndexing());
+    }
+    @GetMapping ("/stopIndexing")
+    @ResponseBody
+    public ResponseEntity<ResultIndexing> stopIndexing(){
+        return ResponseEntity.ok(totalIndexationService.stopTotalIndexing());
     }
 }

@@ -1,6 +1,7 @@
 package project.model;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Класс описывающий сущность Index
@@ -67,5 +68,17 @@ public class Index {
 
     public void setLemmaid (int lemmaid) {
         this.lemmaid = lemmaid;
+    }
+
+    @Override
+    public boolean equals (Object o) {
+        if (!(o instanceof Index)) return false;
+        Index index = (Index) o;
+        return getId() == index.getId() && getPageid() == index.getPageid() && getLemmaid() == index.getLemmaid() && Float.compare(index.getRank(), getRank()) == 0;
+    }
+
+    @Override
+    public int hashCode () {
+        return Objects.hash(getId(), getPageid(), getLemmaid(), getRank());
     }
 }

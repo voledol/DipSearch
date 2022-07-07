@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Класс описывающий сущность Page
@@ -45,5 +46,16 @@ public class Page {
      * Конструктор Page
      */
     public Page () {
+    }
+
+    @Override
+    public boolean equals (Object o) {
+        Page page = (Page) o;
+        return getPath().equals(page.getPath());
+    }
+
+    @Override
+    public int hashCode () {
+        return Objects.hash(path);
     }
 }

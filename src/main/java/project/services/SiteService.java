@@ -44,10 +44,12 @@ public class SiteService {
 
 
     }
-    public Optional<Site> getSiteById(Integer id){
+
+    public Optional<Site> getSiteById (Integer id) {
         return siteRepository.findById(id);
     }
-
-
+    public void  updateSiteIndexationStatus(String status, String site){
+        siteRepository.updateSiteStatus(status, site);
+    }
 
 }

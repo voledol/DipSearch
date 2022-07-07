@@ -3,18 +3,18 @@ package project.services;
 
 import dto.ResultPageDto;
 import dto.ResultSearchDto;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.LemCreator;
-import lombok.RequiredArgsConstructor;
 import project.model.Index;
 import project.model.Lemma;
 import project.model.Page;
 
+import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author VG
@@ -29,96 +29,125 @@ public class SearchSystemService {
     public final SiteService siteService;
     public final SiteConnectService siteConnectService;
     private LemCreator lemCreator = new LemCreator();
+    private String searchRequest;
+    private int offset;
+    private String site;
 
-    public ResponseEntity<ResultSearchDto> find(String searchRequest, String site, String offset, String limit){
-
-        HashMap<String, Integer> lemmsOfSearchRequest = new HashMap<>();
+    @SneakyThrows
+    public ResponseEntity<ResultSearchDto> find (String searchRequest, String site, String offset, String limit) {
+        this.searchRequest = searchRequest;
+        this.offset = Integer.parseInt(offset);
+        this.site = site;
+        HashMap<String, Integer> lemmasOfSearchRequest = new HashMap<>();
         List<Lemma> lemmsFromDB = new ArrayList<>();
-        lemmsOfSearchRequest = lemCreator.getLem(searchRequest);
-        lemmsFromDB = lemmaServise.findLemmaList(lemmsOfSearchRequest);
+        lemmasOfSearchRequest = lemCreator.getLem(searchRequest);
+        lemmsFromDB = lemmaServise.findLemmaList(lemmasOfSearchRequest);
         Collections.sort(lemmsFromDB);
-        List<Index> ind = indexService.findIndexListByLemmaId(lemmsFromDB.get(0).getId());
-        for(int i =1; i < lemmsFromDB.size();i++){
-            ind = removePages(lemmsFromDB.get(i), ind);
+        List<Index> finalInd = indexService.findIndexListByLemmaId(lemmsFromDB.get(0).getId());
+        List<Index> indexNoDup = finalInd.stream().distinct().collect(Collectors.toList());
+        for (int i = 1; i < lemmsFromDB.size(); i++) {
+            indexNoDup = removePages(lemmsFromDB.get(i), indexNoDup);
         }
         ResultSearchDto result = new ResultSearchDto();
-        List<ResultPageDto> results = getResultList(ind, searchRequest,lemmsFromDB);
-        if(results.isEmpty()){
+        List<Page> resultsPage = getResultList(indexNoDup, lemmsFromDB);
+        List<Page> resNoDup = resultsPage.stream().distinct().collect(Collectors.toList());
+        List<ResultPageDto> resultPageDtos = moveToResultPage(resNoDup, lemmsFromDB);
+        if(resultPageDtos.size() > Integer.parseInt(limit)){
+          resultPageDtos = resultPageDtos.subList(10, resultPageDtos.size());
+        }
+        if (resultsPage.isEmpty()) {
             result.setResult("false");
-            result.setError("error задан пустой поисковой запрос");
+            result.setError("error задан пустой поисковой запрос, или страница не найдена");
             return ResponseEntity.ok(result);
         }
         result.setResult("true");
-        result.setCount("" + results.size());
-
-        result.setData(results);
+        result.setCount("" + resultPageDtos.size());
+        result.setData(resultPageDtos);
         return ResponseEntity.ok(result);
     }
-    public  Double relevance(int page_id, List<Lemma> lems){
-        Double rank = 0.0;
-        for(Lemma lemma: lems){
+
+    public Double getRelevance (int page_id, List<Lemma> lems) {
+        double rank = 0.0;
+        for (Lemma lemma : lems) {
             Index index = indexService.findIndexByPage_idAndLemm_id(page_id, lemma.getId());
             rank += index.rank;
         }
         return rank;
     }
+
     //тут мне не нравится
     @SneakyThrows
-    public List<ResultPageDto>getResultList(List<Index> ind, String searchRequest, List<Lemma> lemmsFromDB){
-        List<ResultPageDto> results = new ArrayList<>();
-        for (Index index: ind){
-            ResultPageDto resultPage = new ResultPageDto();
+    public List<Page> getResultList (List<Index> ind, List<Lemma> lemmsFromDB) throws IOException {
+        List<Page> results = new ArrayList<>();
+        for (Index index : ind) {
             Page page = pageServise.getPageById(index.getPageid()).get();
-            String siteName = getSiteName(page);
-            String siteUrl = getSiteUrl(page);
-            resultPage.setSiteName(siteName);
-            resultPage.setSite(siteUrl);
-            resultPage.setUrl(page.getPath());
-            resultPage.setTitle(siteConnectService.getConnection(siteUrl + page.getPath())
-                    .parse()
-                    .select("title").toString());
-            resultPage.setSnippet(getSnippet(page.getContent(), searchRequest));
-            resultPage.setRelevance(relevance(page.getId(), lemmsFromDB));
-            results.add(resultPage);
-
+            results.add(page);
         }
         return results;
     }
-    public  List<Index> removePages(Lemma lem, List<Index> ind){
+
+    public List<Index> removePages (Lemma lem, List<Index> ind) {
         List<Index> finPages = new ArrayList<>();
-        for(Index index: ind){
-            List<Index> pagesId = indexService.findIndexListByPageId(index.getPageid());
-            for(Index page: pagesId){
-                if(page.getLemmaid()!= lem.getId()){
-                    continue;
-                }
-                else{
-                    finPages.add(page);
-                }
+        for (Index index : ind) {
+            List<Index> pagesId = indexService.removePage(index.pageid, lem.getId());
+            if(pagesId!=null){
+                finPages.add(index);
             }
+            }
+            return finPages;
         }
-        return finPages;
 
-    }
-    public String getSnippet(String content, String searchRequest) {
-        String snippet = "";
+    public String getSnippet (String content, String searchRequest) {
         String[] wordList = searchRequest.split(" ");
-        String regString = "(("+wordList[0]+")([\\s\\S]+?)("+wordList[wordList.length -1]+"))";
-        Pattern pattern = Pattern.compile(regString);
-        Matcher matcher = pattern.matcher(content);
-        if(matcher.find()){
-            snippet = "<b> " + matcher.group().toString() + " </b>";
+        StringBuilder snippetToString = new StringBuilder();
+        Integer start = content.toLowerCase(Locale.ROOT).indexOf(wordList[0]);
+        if (start != -1) {
+            char[] snippet = new char[50];
+            content.getChars(start, start + 50, snippet, 0);
+            for (char ch : snippet) {
+                snippetToString.append(ch);
+            }
+            snippetToString = new StringBuilder("<b>" + snippetToString + "</b>");
+        } else {
+            snippetToString = new StringBuilder("сниппет не найден");
         }
-        else{
-            snippet = "snippet не найден";
-        }
-
-        return snippet;
+        return snippetToString.toString();
     }
-    public String getSiteName(Page page){
+
+    public String getSiteName (Page page) {
         return siteService.getSiteById(page.getSiteId()).get().getName();
     }
-    public String getSiteUrl(Page page){
+
+    public String getSiteUrl (Page page) {
         return siteService.getSiteById(page.getSiteId()).get().getUrl();
+    }
+
+    public List<ResultPageDto> moveToResultPage (List<Page> pages, List<Lemma> lemmasFromDB) {
+        List<ResultPageDto> result = new ArrayList<>();
+
+        for (Page page : pages) {
+            ResultPageDto resultPage = new ResultPageDto();
+            String siteName = getSiteName(page);
+            String siteUrl = getSiteUrl(page);
+            resultPage.setRelevance(getRelevance(page.getId(), lemmasFromDB));
+            if (resultPage.getRelevance() > 50) {
+                resultPage.setSiteName(siteName);
+                resultPage.setSite(siteUrl.trim());
+                resultPage.setUrl(page.getPath());
+                try {
+                    resultPage.setTitle(siteConnectService.getConnection(siteUrl + page.getPath())
+                            .parse()
+                            .select("title").toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    resultPage.setTitle("нет сети");
+                }
+//                resultPage.setTitle("нет сети");
+                resultPage.setSnippet(getSnippet(page.getContent(), searchRequest));
+                result.add(resultPage);
+            }
+        }
+        Collections.sort(result);
+        return result;
     }
 }

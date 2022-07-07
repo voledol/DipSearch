@@ -1,5 +1,6 @@
 package project.services;
 
+import org.springframework.data.jpa.repository.Query;
 import project.repositoryes.IndexRepository;
 import lombok.RequiredArgsConstructor;
 import project.model.Index;
@@ -16,18 +17,28 @@ public class IndexService {
         indexRepository.save(index);
     }
     public List<Index> findIndexListByPageId(Integer id){
-        List<Index> resultSet = new ArrayList<>();
-
-        List<Index> indexList = indexRepository.findAllByPageid(id);
-        return resultSet;
+        return indexRepository.findAllByPageid(id);
     }
+
     public Index findIndexByPage_idAndLemm_id(Integer page_id, Integer lemm_id){
-        return indexRepository.findByPageidAndLemmaid(page_id, lemm_id);
+        List<Index> index = indexRepository.findAllByPageidAndLemmaid(page_id, lemm_id);
+        if(index.size()>0){
+            return index.get(0);
+        }
+        else{
+            Index  indexDefault = new Index();
+            indexDefault.setRank(0);
+            index.add(indexDefault);
+        }
+        return index.get(0);
     }
     public List<Index> findIndexListByLemmaId(Integer lemma_id){
         return indexRepository.findAllByLemmaid(lemma_id);
     }
     public long getIndexCount(){
         return indexRepository.count();
+    }
+    public List<Index> removePage (int page_id, int lemma_id){
+        return indexRepository.removePage(page_id, lemma_id);
     }
 }
