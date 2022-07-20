@@ -39,7 +39,7 @@ public class SearchSystemService {
         this.offset = Integer.parseInt(offset);
         this.site = site;
         HashMap<String, Integer> lemmasOfSearchRequest = new HashMap<>();
-        List<Lemma> lemmsFromDB = new ArrayList<>();
+        List<Lemma> lemmsFromDB = new ArrayList<>(); //// продолжай допиливать поиск
         lemmasOfSearchRequest = lemCreator.getLem(searchRequest);
         lemmsFromDB = lemmaServise.findLemmaList(lemmasOfSearchRequest);
         Collections.sort(lemmsFromDB);

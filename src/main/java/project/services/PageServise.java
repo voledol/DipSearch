@@ -14,7 +14,7 @@ public class PageServise {
     public final PageRepository pageJPAinterface;
 
     public Page getPage (String path, Integer site_id) {
-        return pageJPAinterface.findAllByPathAndSiteId(path, site_id).get(0);
+        return pageJPAinterface.findByPathAndSiteId(path, site_id);
     }
 
     public Page savePage (Page page) {

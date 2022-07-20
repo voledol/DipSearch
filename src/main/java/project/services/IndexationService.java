@@ -1,12 +1,10 @@
 package project.services;
 
 
-import dto.ResultIndexing;
 import dto.ResultStatisticDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Node;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.LemCreator;
@@ -14,11 +12,8 @@ import project.model.Index;
 import project.model.Lemma;
 import project.model.Page;
 import project.model.Site;
-import project.repositoryes.SiteConnection;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ForkJoinPool;
 
 /**
  * Класс построничной индексации сайта
@@ -29,7 +24,7 @@ import java.util.concurrent.ForkJoinPool;
 @Service
 @RequiredArgsConstructor
 public class IndexationService {
-    public final LemCreator lemCreator = new LemCreator();
+    public  LemCreator lemCreator = new LemCreator();
     public final SiteService siteService;
     public final PageServise pageServise;
     public final LemmaServise lemmaServise;
@@ -56,16 +51,13 @@ public class IndexationService {
     @SneakyThrows
     public synchronized void indexPage (String pageUrl) {
         Document document = siteConnection.getConnection(pageUrl).parse();
-        Map<String, Integer> titleLemma = new HashMap<>();
-        Map<String, Integer> bodyLemma = new HashMap<>();
         String correctUrl = getCorrectUrl(pageUrl);
         Integer site_id = getSiteId(pageUrl);
         Page page = pageServise.getPage(correctUrl, site_id);
-        titleLemma = lemCreator.getLem(siteConnection.getContentWithSelector("title", document));
-        System.out.println(titleLemma);
-        bodyLemma = lemCreator.getLem(siteConnection.getContentWithSelector("body", document));
-
-        System.out.println(bodyLemma);
+        HashMap<String, Integer> titleLemma;
+        HashMap<String, Integer> bodyLemma;
+         titleLemma = lemCreator.getLem(siteConnection.getContentWithSelector("title", document));
+         bodyLemma = lemCreator.getLem(siteConnection.getContentWithSelector("body", document));
         Map<String, Float> rank = calculateLemmaRank(titleLemma, bodyLemma);
         for (Map.Entry<String, Integer> entry : titleLemma.entrySet()) {
             if (bodyLemma.containsKey(entry.getKey())) {

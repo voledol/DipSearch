@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface PageRepository extends JpaRepository<Page, Integer> {
     @Query ("FROM Page Where path = :path and site_id = :site_id")
-    List<Page> findAllByPathAndSiteId (@Param("path") String path, @Param("site_id") Integer site_id);
+    Page findByPathAndSiteId (@Param("path") String path, @Param("site_id") Integer site_id);
     Page save(Page page);
     Optional<Page> findById(Integer id);
 

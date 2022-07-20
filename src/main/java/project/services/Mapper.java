@@ -4,12 +4,6 @@ import lombok.SneakyThrows;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import project.Main;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,33 +21,48 @@ import static java.lang.Thread.sleep;
  **/
 public class Mapper extends RecursiveTask<Set<Nodelink>> {
     private final Nodelink parent;
-    private Set<Nodelink> links = ConcurrentHashMap.newKeySet();
-    public PageCreatorService pageCreator;
-    public IndexationService indexationService;
+    private final Set<Nodelink> links = ConcurrentHashMap.newKeySet();
+    public final PageCreatorService pageCreator;
+    public final IndexationService indexationService;
+    private final String SITE_URL;
 
-    public Mapper (Nodelink parent, PageCreatorService pageCreatorService, IndexationService indexationService) {
+    public Mapper (Nodelink parent, PageCreatorService pageCreatorService, IndexationService indexationService, String SITE_URL) {
         this.parent = parent;
         this.pageCreator = pageCreatorService;
         this.indexationService = indexationService;
+        this.SITE_URL = SITE_URL;
     }
 
 
     @Override
     public Set<Nodelink> compute () {
-        cancel(Main.isIndexationRunning);
-            links.add(parent);
-            pageCreator.createPage(parent.getUrl());
-            indexationService.indexPage(parent.getUrl());
-            Set<Nodelink> childrenLinks = this.getChildrenLinks(parent);
-            Set<Mapper> taskList = new HashSet<>();
-
-            for (Nodelink child : childrenLinks) {
-                taskList.add((Mapper) new Mapper(child, pageCreator, indexationService).fork());
-            }
-            for (Mapper task : taskList) {
-                links.addAll(task.join());
-            }
-        return links;
+//        cancel(Main.isIndexationRunning);
+//            links.add(parent);
+//            pageCreator.createPage(parent.getUrl());
+//            indexationService.indexPage(parent.getUrl());
+//            Set<Nodelink> childrenLinks = this.getChildrenLinks(parent);
+//            Set<Mapper> taskList = new HashSet<>();
+//
+//            for (Nodelink child : childrenLinks) {
+//                taskList.add((Mapper) new Mapper(child, pageCreator, indexationService, SITE_URL).fork());
+//            }
+//            for (Mapper task : taskList) {
+//                links.addAll(task.join());
+//            }
+//        return links;
+        links.add(parent);
+        pageCreator.createPage(parent.getUrl());
+        indexationService.indexPage(parent.getUrl());
+        Set<Nodelink> childrenLinks = this.getChildrenLinks(parent);
+        Set<Mapper> taskList = new HashSet<>();
+        for (Nodelink child : childrenLinks) {
+            taskList.add((Mapper) new Mapper(child, pageCreator, indexationService, SITE_URL).fork());
+        }
+        for (Mapper task : taskList) {
+            task.join();
+            links.addAll(task.join());
+        }
+        return links;// индексирует некоторые страницы по несколько раз
     }
 
     private Set<Nodelink> getChildrenLinks (Nodelink parent) {
@@ -62,14 +71,13 @@ public class Mapper extends RecursiveTask<Set<Nodelink>> {
             Elements links = getPageContent(parent);
             Set<String> absUrls = links.stream().map(el -> el.attr("abs:href"))
                     .filter(u -> !u.equals(parent.getUrl()))
-                    .filter(y -> y.startsWith(indexationService.getSiteTitleUrl(parent.getUrl())))//дичь
+                    .filter(y -> y.startsWith(SITE_URL))
                     .filter(v -> !v.contains("#") && !v.contains("?") && !v.contains("'"))
                     .filter(w -> !w.matches("([^\\s]+(\\.(?i)(jpg|png|gif|bmp|pdf))$)"))
                     .collect(Collectors.toSet());
             for (String link : absUrls) {
                 Nodelink node = new Nodelink(link, parent);
                 if (!links.contains(node)) {
-
                     parent.addSubLink(node);
                 }
             }
@@ -88,15 +96,15 @@ public class Mapper extends RecursiveTask<Set<Nodelink>> {
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0")
                 .referrer("http://www.google.com")
                 .ignoreHttpErrors(true)
-                .timeout(10000)
+                .timeout(4000)
                 .execute();
         return response.parse().select("a[href]");
     }
 
 
     @Override
-    public boolean cancel(boolean isIndexing) {
-        if(isIndexing){
+    public boolean cancel (boolean isIndexing) {
+        if (isIndexing) {
             return false;
         }
         getPool().shutdownNow();

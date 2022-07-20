@@ -18,7 +18,7 @@ public class LemCreator {
     /**
      * Поле списка лемма лемма/ранг
      */
-    public HashMap<String, Integer> lemmas = new HashMap<>();
+//    public  HashMap<String, Integer> lemmas = new HashMap<>();
     /**
      * Поле морфологических частей речи подлежащих удалению из списка лемм
      */
@@ -48,8 +48,7 @@ public class LemCreator {
             }
 
         }
-        lemmas = setLemmasCount(lemWorkArray);
-        return lemmas;
+        return setLemmasCount(lemWorkArray);
     }
 
     /**
@@ -69,34 +68,30 @@ public class LemCreator {
         return isWord;
     }
 
-    /**
-     * Функция проверки наличи я леммы в списке, в случае наличия слова в списке лемм, функция увеличивает ранг леммы
-     *
-     * @param word - слово проверемое на наличие в списке лемм
-     */
-    public void putWord (String word) {
-        if (lemmas.containsKey(word)) {
-            lemmas.put(word, lemmas.get(word) + 1);
-        } else {
-            lemmas.put(word, 1);
-        }
-    }
 
     public HashMap<String, Integer> setLemmasCount (List<List<String>> lemWorkArray) {
+        HashMap<String, Integer> lemmas = new HashMap<>();
         for (List<String> lemma : lemWorkArray) {
-            long start = System.currentTimeMillis();
             if (lemma.size() > 1) {
                 for (int k = 0; k < lemma.size(); k++) {
                     if (isWord(luceneMorphology.getMorphInfo(lemma.get(k)).toString())) {
-                        putWord(lemma.get(k));
+                        if (lemmas.containsKey(lemma.get(k))) {
+                            lemmas.put(lemma.get(k), lemmas.get(lemma.get(k)) + 1);
+                        } else {
+                            lemmas.put(lemma.get(k), 1);
+                        }
                     }
                 }
             } else {
                 if (isWord(luceneMorphology.getMorphInfo(lemma.get(0)).toString())) {
-                    putWord(lemma.get(0));
+                    if (lemmas.containsKey(lemma.get(0))) {
+                        lemmas.put(lemma.get(0), lemmas.get(lemma.get(0)) + 1);
+                    } else {
+                        lemmas.put(lemma.get(0), 1);
+                    }
                 }
             }
-            long finish = System.currentTimeMillis() - start;
+
 
         }
         return lemmas;
