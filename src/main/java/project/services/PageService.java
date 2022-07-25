@@ -10,27 +10,27 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class PageServise {
-    public final PageRepository pageJPAinterface;
+public class PageService {
+    public final PageRepository pageJPAInterface;
 
     public Page getPage (String path, Integer site_id) {
-        return pageJPAinterface.findByPathAndSiteId(path, site_id);
+        return pageJPAInterface.findByPathAndSiteId(path, site_id);
     }
 
     public Page savePage (Page page) {
-        return pageJPAinterface.save(page);
+        return pageJPAInterface.save(page);
     }
 
     public Optional<Page> getPageById (Integer id) {
-        return pageJPAinterface.findById(id);
+        return pageJPAInterface.findById(id);
     }
 
     public long getPageCount () {
-        return pageJPAinterface.count();
+        return pageJPAInterface.count();
     }
 
     public List<Page> getPageBySiteId (Integer site_id) {
-        return pageJPAinterface.findAllBySiteId(site_id);
+        return pageJPAInterface.findAllBySiteId(site_id);
     }
 
     public Integer getPageCountBySiteId (Integer site_id) {

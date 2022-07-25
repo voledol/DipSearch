@@ -26,7 +26,7 @@ import java.util.*;
 public class IndexationService {
     public  LemCreator lemCreator = new LemCreator();
     public final SiteService siteService;
-    public final PageServise pageServise;
+    public final PageService pageServise;
     public final LemmaServise lemmaServise;
     public final IndexService indexService;
     public final PageCreatorService pageCreatorService;
@@ -40,16 +40,15 @@ public class IndexationService {
      **/
     public ResponseEntity<ResultStatisticDto> indexPageRequest(String pageUrl){
         ResultStatisticDto dto = new ResultStatisticDto();
-        if(isInSearchField(pageUrl)){
+
             pageCreatorService.createPage(pageUrl);
             indexPage(pageUrl);
             dto.setResult("true");
             return ResponseEntity.ok(dto);
-        }
-        return ResponseEntity.ok(ResultStatisticDto.getFalseIndexPageResult());
     }
     @SneakyThrows
     public synchronized void indexPage (String pageUrl) {
+        pageCreatorService.createPage(pageUrl);
         Document document = siteConnection.getConnection(pageUrl).parse();
         String correctUrl = getCorrectUrl(pageUrl);
         Integer site_id = getSiteId(pageUrl);
@@ -64,16 +63,15 @@ public class IndexationService {
                 bodyLemma.put(entry.getKey(), entry.getValue() + bodyLemma.get(entry.getKey()));
             }
         }
-        synchronized (bodyLemma.entrySet()){
+
             for (Map.Entry<String, Integer> entry : bodyLemma.entrySet()) {
                 Index index = indexCreator(page, entry.getKey(), entry.getValue());
                 index.setRank(rank.get(entry.getKey()));
                 indexService.save(index);
             }
-        }
         titleLemma.clear();
         bodyLemma.clear();
-        System.out.println("страница проиндексирована");
+        System.out.println("страница проиндексирована " + pageUrl);
 
     }
 

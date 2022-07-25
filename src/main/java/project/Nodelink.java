@@ -1,64 +1,49 @@
-package project.services;
+package project;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Класс описывающий узловые ссылки сайта
- *
- * @author VG
- * @version 0.1
- **/
 public class Nodelink implements Comparable<Nodelink> {
-
     private final String url;
-
     private final Nodelink parent;
-
     private final int depth;
-
     private Set<Nodelink> subLinks = ConcurrentHashMap.newKeySet();
 
-
-    public Nodelink (String url) {
+    public Nodelink(String url) {
         this.url = url;
         this.depth = 0;
         this.parent = null;
     }
 
-
-    public Nodelink (String url, Nodelink parent) {
+    public Nodelink(String url, Nodelink parent) {
         this.url = url;
         this.depth = parent.getDepth() + 1;
         this.parent = parent;
     }
 
-
-    public synchronized void addSubLink (Nodelink subLink) {
+    public synchronized void addSubLink(Nodelink subLink) {
         this.subLinks.add(subLink);
     }
 
-
-    public Set<Nodelink> getSubLinks () {
+    public Set<Nodelink> getSubLinks() {
         return subLinks;
     }
 
-    public Nodelink getParent () {
+    public Nodelink getParent() {
         return parent;
     }
 
-    public int getDepth () {
+    public int getDepth() {
         return depth;
     }
 
-    public String getUrl () {
+    public String getUrl() {
         return url;
     }
 
-
     @Override
-    public int compareTo (Nodelink node) {
+    public int compareTo(Nodelink node) {
         if (this.getParent() == null) return -1;
         if (node.getParent() == null) return 1;
         if (node.getParent().equals(this)) return -1;
@@ -73,10 +58,8 @@ public class Nodelink implements Comparable<Nodelink> {
             return (this.getDepth() > node.getDepth()) ? this.getParent().compareTo(node) : this.compareTo(node.getParent());
         }
     }
-
-
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -84,14 +67,12 @@ public class Nodelink implements Comparable<Nodelink> {
 
         return Objects.equals(url, node.url);
     }
-
     @Override
-    public int hashCode () {
+    public int hashCode() {
         return url != null ? url.hashCode() : 0;
     }
-
     @Override
-    public String toString () {
+    public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("\t".repeat(Math.max(0, this.getDepth())));
         return result.append(this.getUrl()).toString();

@@ -12,8 +12,6 @@ import project.model.Site;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 /**
  * Класс сборщик статистики содержащихс в БД данных о сайтах и процессе работы
@@ -24,7 +22,7 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class DBStatisticService {
-    private final PageServise pageServise;
+    private final PageService pageServise;
     private final IndexService indexServise;
     private final LemmaServise lemmaServise;
     private final SiteService siteServise;

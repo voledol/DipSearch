@@ -10,6 +10,8 @@ spring:
 
 available-sites:
   sites:
+    - url: https://nikoartgallery.com
+      name: "Галерея Никогосяна"
     - url: http://www.playback.ru
       name: "playback"
     - url: https://volochek.life

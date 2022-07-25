@@ -39,7 +39,7 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for(project.PropertyLoader.Site st: propertyes.getAvailaibleSites().getAvailableSites()){
+        for(project.PropertyLoader.Site st: propertyes.getAvailableSites().getAvailableSites()){
             Site site = new Site();
             site.setUrl(st.getUrl());
             site.setName(st.getName());

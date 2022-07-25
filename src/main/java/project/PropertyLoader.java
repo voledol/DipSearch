@@ -31,7 +31,7 @@ public class PropertyLoader {
         this.spring = spring;
     }
 
-    public AvailableSites getAvailaibleSites () {
+    public AvailableSites getAvailableSites () {
         return availableSites;
     }
 

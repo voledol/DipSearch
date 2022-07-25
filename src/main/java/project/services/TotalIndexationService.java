@@ -4,9 +4,12 @@ import dto.ResultIndexing;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.Main;
+import project.Nodelink;
+import project.PageCreatorTest;
 import project.model.Site;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -19,8 +22,14 @@ public class TotalIndexationService {
     public ResultIndexing startTotalIndexing () {
         List<Site> sites = siteService.getAllSites();
         Main.isIndexationRunning = true;
+        for(Site st: sites){
+            siteService.updateSiteIndexationStatus("FAILED", st.getUrl());
+        }
         for (Site st : sites) {
-            mapperService.getNodeLinkSet(st.getUrl());
+          Set<Nodelink> resultSet = mapperService.getNodeLinkSet(st.getUrl());
+            PageCreatorTest.existPages.clear();
+            resultSet.clear();
+            siteService.updateSiteIndexationStatus("INDEXED", st.getUrl());
         }
         ResultIndexing resultIndexing = new ResultIndexing();
         resultIndexing.setResult("true");

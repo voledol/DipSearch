@@ -2,6 +2,8 @@ package project.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import project.Nodelink;
+import project.Mapper;
 
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
@@ -14,7 +16,7 @@ public class MapperService {
     public final SiteService siteService;
 
     public Set<Nodelink> getNodeLinkSet (String url) {
-        Mapper mapper = new Mapper(new Nodelink(url), pageCreatorService, indexationService, url);
+        Mapper mapper = new Mapper(new Nodelink(url), pageCreatorService, indexationService);
         siteService.updateSiteIndexationStatus("INDEXING", url);
         return new ForkJoinPool(6, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false)
                 .invoke(mapper);

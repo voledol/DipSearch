@@ -19,7 +19,7 @@ import project.repositoryes.SiteConnection;
 @Service
 @RequiredArgsConstructor
 public class PageCreatorService {
-    public final PageServise pageServise;
+    public final PageService pageServise;
     public final SiteConnection siteConnection;
     public final SiteService siteService;
 
@@ -33,10 +33,8 @@ public class PageCreatorService {
     public Page createPage (String url) {
         Connection.Response response = siteConnection.getConnection(url);
         Page page = new Page();
-        String[] urlSplit = url.split("/");
-        String urlFin = urlSplit[0] + "//" + urlSplit[1] + urlSplit[2];
         Elements content = siteConnection.getContent("html");
-        page.setPath(url.replaceAll(urlFin, ""));
+        page.setPath(getCorrectUrl(url));
         if (page.getPath().isEmpty()) {
             page.setPath("/");
         }
@@ -55,5 +53,16 @@ public class PageCreatorService {
             }
         }
         return id;
+    }
+    public String getCorrectUrl (String url) {
+        String[] split = url.split("/");
+        StringBuilder correctUrl = new StringBuilder();
+        if (split.length <= 3) {
+            return "/";
+        }
+        for (int i = 3; i < split.length; i++) {
+            correctUrl.append("/").append(split[i]);
+        }
+        return String.valueOf(correctUrl);
     }
 }
