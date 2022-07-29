@@ -150,10 +150,16 @@ public class PropertyLoader {
              */
             @JsonProperty ("ddl-auto")
             private String ddl_auto;
+            private String dialect;
 
-            /**
-             * Getters and setters
-             */
+            public String getDialect () {
+                return dialect;
+            }
+
+            public void setDialect (String dialect) {
+                this.dialect = dialect;
+            }
+
             public String getDdl_auto () {
                 return ddl_auto;
             }

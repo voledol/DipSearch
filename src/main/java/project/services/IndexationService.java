@@ -13,6 +13,7 @@ import project.model.Lemma;
 import project.model.Page;
 import project.model.Site;
 
+import javax.persistence.NonUniqueResultException;
 import java.util.*;
 
 /**
@@ -49,10 +50,16 @@ public class IndexationService {
     @SneakyThrows
     public synchronized void indexPage (String pageUrl) {
         pageCreatorService.createPage(pageUrl);
+        Page page = new Page();
         Document document = siteConnection.getConnection(pageUrl).parse();
         String correctUrl = getCorrectUrl(pageUrl);
         Integer site_id = getSiteId(pageUrl);
-        Page page = pageServise.getPage(correctUrl, site_id);
+        try {
+             page = pageServise.getPage(correctUrl, site_id);
+        }
+        catch (NonUniqueResultException ex){
+            System.out.println("страница уже проиндексирована");
+        }
         HashMap<String, Integer> titleLemma;
         HashMap<String, Integer> bodyLemma;
          titleLemma = lemCreator.getLem(siteConnection.getContentWithSelector("title", document));
@@ -63,7 +70,6 @@ public class IndexationService {
                 bodyLemma.put(entry.getKey(), entry.getValue() + bodyLemma.get(entry.getKey()));
             }
         }
-
             for (Map.Entry<String, Integer> entry : bodyLemma.entrySet()) {
                 Index index = indexCreator(page, entry.getKey(), entry.getValue());
                 index.setRank(rank.get(entry.getKey()));

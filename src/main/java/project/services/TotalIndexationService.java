@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.Main;
 import project.Nodelink;
-import project.PageCreatorTest;
+import project.PageDuplicateCheck;
 import project.model.Site;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class TotalIndexationService {
         }
         for (Site st : sites) {
           Set<Nodelink> resultSet = mapperService.getNodeLinkSet(st.getUrl());
-            PageCreatorTest.existPages.clear();
+            PageDuplicateCheck.existPages.clear();
             resultSet.clear();
             siteService.updateSiteIndexationStatus("INDEXED", st.getUrl());
         }

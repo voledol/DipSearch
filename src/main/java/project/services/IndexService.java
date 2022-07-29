@@ -38,7 +38,7 @@ public class IndexService {
     public long getIndexCount(){
         return indexRepository.count();
     }
-    public List<Index> removePage (int page_id, int lemma_id){
+    public Index removePage (int page_id, int lemma_id){
         return indexRepository.removePage(page_id, lemma_id);
     }
 }

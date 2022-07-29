@@ -5,9 +5,8 @@ spring:
     password: Gorila123
   jpa:
     hibernate:
-      ddl-auto: none
-
-
+      ddl-auto: create
+      dialect: DB2Dialect
 available-sites:
   sites:
     - url: https://nikoartgallery.com

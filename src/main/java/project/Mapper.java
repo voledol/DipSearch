@@ -20,7 +20,7 @@ public class Mapper extends RecursiveTask<Set<Nodelink>> {
 
     private Set<Nodelink> links = ConcurrentHashMap.newKeySet();
     private String SITE_URL;
-    private PageCreatorTest pageCreatorTest = new PageCreatorTest();
+    private PageDuplicateCheck pageCreatorTest = new PageDuplicateCheck();
     private final PageCreatorService pageCreator;
     private final IndexationService indexationService;
 
@@ -36,11 +36,11 @@ public class Mapper extends RecursiveTask<Set<Nodelink>> {
     @Override
     public Set<Nodelink> compute () {
         links.add(parent);
-        if(PageCreatorTest.existPages.containsKey(parent.getUrl())){
-            PageCreatorTest.existPages.put(parent.getUrl(), PageCreatorTest.existPages.get(parent.getUrl()) +1);
+        if(PageDuplicateCheck.existPages.containsKey(parent.getUrl())){
+            PageDuplicateCheck.existPages.put(parent.getUrl(), PageDuplicateCheck.existPages.get(parent.getUrl()) +1);
         }
         else {
-            PageCreatorTest.existPages.put(parent.getUrl(), 1);
+            PageDuplicateCheck.existPages.put(parent.getUrl(), 1);
         }
         if(pageCreatorTest.isNoneExistPage(parent.getUrl())){
             indexationService.indexPage(parent.getUrl());

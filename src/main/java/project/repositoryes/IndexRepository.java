@@ -16,5 +16,5 @@ public interface IndexRepository extends JpaRepository<Index, Integer> {
     List<Index> findAllByPageidAndLemmaid (Integer page_id, Integer lemma_id);
     List<Index> findAllByLemmaid(Integer lemma_id);
     @Query("FROM Index where lemma_id = :lemma_id and page_id = :page_id")
-    List<Index> removePage(@Param("page_id") int page_id,@Param("lemma_id") int lemma_id);
+    Index removePage(@Param("page_id") int page_id,@Param("lemma_id") int lemma_id);
 }
