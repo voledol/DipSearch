@@ -27,8 +27,8 @@ public class TotalIndexationService {
         }
         for (Site st : sites) {
           Set<Nodelink> resultSet = mapperService.getNodeLinkSet(st.getUrl());
-            PageDuplicateCheck.existPages.clear();
             resultSet.clear();
+            PageDuplicateCheck.existPages.clear();
             siteService.updateSiteIndexationStatus("INDEXED", st.getUrl());
         }
         ResultIndexing resultIndexing = new ResultIndexing();

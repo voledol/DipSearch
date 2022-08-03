@@ -33,9 +33,8 @@ public class LemCreator {
      */
     public HashMap<String, Integer> getLem (String text) {
         String[] words;
-        words = text.toLowerCase()
-                .replaceAll("[A-z]", "")
-                .replaceAll("[^\\p{L}\\p{Z}]+", "").replaceAll("[^А-я,\\s]", "")
+        words = text.toLowerCase().replaceAll("[^А-я\\s]", "").trim()
+                .replaceAll("\\s+", " ")
                 .split("\\s");
         List<List<String>> lemWorkArray = new ArrayList<>();
         for (int i = 0; i < words.length; i++) {

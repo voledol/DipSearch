@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import project.Main;
 import project.services.*;
 
 @Controller
@@ -27,6 +28,7 @@ public class GeneralController {
     @ResponseBody
     public ResponseEntity<ResultStatisticDto> statistic () {
         siteService.saveSitesIfNotExist();
+        Main.availableSites = siteService.getAllSites();
         return dbStatisticService.getStatistic();
     }
 

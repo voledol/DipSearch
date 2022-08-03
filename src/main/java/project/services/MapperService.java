@@ -18,7 +18,7 @@ public class MapperService {
     public Set<Nodelink> getNodeLinkSet (String url) {
         Mapper mapper = new Mapper(new Nodelink(url), pageCreatorService, indexationService);
         siteService.updateSiteIndexationStatus("INDEXING", url);
-        return new ForkJoinPool(6, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, false)
+        return new ForkJoinPool()
                 .invoke(mapper);
     }
 

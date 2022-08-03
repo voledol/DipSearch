@@ -4,10 +4,13 @@ package project.services;
 import dto.ResultStatisticDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.LemCreator;
+import project.Main;
 import project.model.Index;
 import project.model.Lemma;
 import project.model.Page;
@@ -26,7 +29,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class IndexationService {
     public  LemCreator lemCreator = new LemCreator();
-    public final SiteService siteService;
     public final PageService pageServise;
     public final LemmaServise lemmaServise;
     public final IndexService indexService;
@@ -48,10 +50,9 @@ public class IndexationService {
             return ResponseEntity.ok(dto);
     }
     @SneakyThrows
-    public synchronized void indexPage (String pageUrl) {
+    public synchronized   void indexPage (String pageUrl) {
         pageCreatorService.createPage(pageUrl);
         Page page = new Page();
-        Document document = siteConnection.getConnection(pageUrl).parse();
         String correctUrl = getCorrectUrl(pageUrl);
         Integer site_id = getSiteId(pageUrl);
         try {
@@ -62,8 +63,8 @@ public class IndexationService {
         }
         HashMap<String, Integer> titleLemma;
         HashMap<String, Integer> bodyLemma;
-         titleLemma = lemCreator.getLem(siteConnection.getContentWithSelector("title", document));
-         bodyLemma = lemCreator.getLem(siteConnection.getContentWithSelector("body", document));
+         titleLemma = lemCreator.getLem(getContentWithSelector(page.getContent(), "title"));
+         bodyLemma = lemCreator.getLem(getContentWithSelector(page.getContent(), "body"));
         Map<String, Float> rank = calculateLemmaRank(titleLemma, bodyLemma);
         for (Map.Entry<String, Integer> entry : titleLemma.entrySet()) {
             if (bodyLemma.containsKey(entry.getKey())) {
@@ -143,7 +144,7 @@ public class IndexationService {
 
     public boolean isInSearchField (String url) {
         String siteUrl = getSiteTitleUrl(url);
-        List<Site> siteList = siteService.getAllSites();
+        List<Site> siteList = Main.availableSites;
         for (Site st : siteList) {
             if (st.getUrl().contains(siteUrl)) {
                 return true;
@@ -159,13 +160,17 @@ public class IndexationService {
 
     public Integer getSiteId (String url) {
         String siteUrl  = getSiteTitleUrl(url);
-        List<Site> siteList = siteService.getAllSites();
+        List<Site> siteList = Main.availableSites;
         for (Site st : siteList) {
             if (st.getUrl().contains(siteUrl)) {
                 return st.getId();
             }
         }
         return 0;
+    }
+    public String getContentWithSelector(String text, String selector){
+        Element content = Jsoup.parse(text);
+        return content.select(selector).toString();
     }
 
 

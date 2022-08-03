@@ -35,6 +35,7 @@ public class Page {
     /**
      * поле контент на с ранице
      */
+    @Column (columnDefinition = "mediumtext")
     private String content;
     /**
      * Поле id сайта

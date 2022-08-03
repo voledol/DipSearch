@@ -5,6 +5,7 @@ import dto.ResultPageDto;
 import dto.ResultSearchDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.jsoup.Jsoup;
 import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jca.cci.CciOperationNotSupportedException;
@@ -29,7 +30,7 @@ public class SearchSystemService {
     public final LemmaServise lemmaServise;
     public final IndexService indexService;
     public final SiteService siteService;
-    public final SiteConnectService siteConnectService;
+//    public final SiteConnectService siteConnectService;
     private LemCreator lemCreator = new LemCreator();
     private String searchRequest;
     private int offset;
@@ -107,14 +108,8 @@ public class SearchSystemService {
             resultPage.setUrl(page.getPath());
             System.out.println(System.currentTimeMillis()-start + " без запроса в интернет");
             long start1 = System.currentTimeMillis();
-            try {
-                resultPage.setTitle(siteConnectService.getConnection(siteUrl + page.getPath())
-                        .parse()
-                        .select("title").toString().replaceAll("<title>", "").replaceAll("</title>",""));
-            } catch (IOException e) {
-                e.printStackTrace();
-                resultPage.setTitle("нет сети");
-            }
+            resultPage.setTitle(Jsoup.parse(page.getContent()).select("title").toString()
+                    .replaceAll("<title>", "").replaceAll("</title>", ""));
             System.out.println(System.currentTimeMillis() - start1 + "запрос в интернет");
             resultPage.setSnippet(getSnippet(page.getContent(), searchRequest));
             result.add(resultPage);

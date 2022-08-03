@@ -38,7 +38,7 @@ public class PageCreatorService {
         if (page.getPath().isEmpty()) {
             page.setPath("/");
         }
-        page.setContent(content.text().replaceAll("'", ""));
+        page.setContent(content.toString());
         page.setCode(response.statusCode());
         page.setSiteId(getSiteId(url));
         pageServise.savePage(page);
