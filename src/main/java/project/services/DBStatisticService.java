@@ -7,6 +7,7 @@ import dto.TotalStatisticDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import project.Main;
 import project.model.Site;
 
 import java.sql.Date;
@@ -22,10 +23,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DBStatisticService {
-    private final PageService pageServise;
-    private final IndexService indexServise;
+    private final PageService pageService;
     private final LemmaServise lemmaServise;
-    private final SiteService siteServise;
+    private final SiteService siteService;
 
     public ResponseEntity<ResultStatisticDto> getStatistic () {
         try {
@@ -43,20 +43,18 @@ public class DBStatisticService {
     }
 
     private TotalStatisticDto getTotalStatistic () {
-        Long pageCount = pageServise.getPageCount();
+        Long pageCount = pageService.getPageCount();
         Long lemmaCount = lemmaServise.getLemmaCount();
-        Long siteCount = siteServise.getSiteCount();
-        boolean indexing = false;
+        Long siteCount = siteService.getSiteCount();
+        boolean indexing = Main.isIndexationRunning;
         return new TotalStatisticDto(pageCount,lemmaCount,siteCount,indexing);
     }
     private List<DetailedStatisticDto> getDetailedStatistic () {
-        List<Site> siteList = siteServise.getAllSites();
+        List<Site> siteList = siteService.getAllSites();
         List<DetailedStatisticDto> result = new ArrayList<>();
-        siteList.stream().forEach(site -> {Integer pageCount = pageServise.getPageCountBySiteId(site.getId());
+        siteList.stream().forEach(site -> {Integer pageCount = pageService.getPageCountBySiteId(site.getId());
             Integer lemmaCount = lemmaServise.getLemmaCountBySiteID(site.getId());
-            if(site.getLastError()==null){
-                site.setLastError("noErrors");
-            }if(site.getStatusTime()==null){
+            if(site.getStatusTime()==null){
                 site.setStatusTime(new Date(0));
             }
             result.add(DetailedStatisticDto.getDto(site, pageCount, lemmaCount));} );

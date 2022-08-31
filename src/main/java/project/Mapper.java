@@ -36,6 +36,9 @@ public class Mapper extends RecursiveTask<Set<Nodelink>> {
     @Override
     public Set<Nodelink> compute () {
         links.add(parent);
+        if(!Main.isIndexationRunning){
+            return links;
+        }
         if(PageDuplicateCheck.existPages.containsKey(parent.getUrl())){
             PageDuplicateCheck.existPages.put(parent.getUrl(), PageDuplicateCheck.existPages.get(parent.getUrl()) +1);
         }

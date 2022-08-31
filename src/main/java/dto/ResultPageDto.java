@@ -11,8 +11,8 @@ import java.io.Serializable;
 public class ResultPageDto implements Comparable<ResultPageDto> {
     private String site;
     private String siteName;
-    @JsonProperty ("url")
-    private String url;
+    @JsonProperty ("uri")
+    private String uri;
     private String title;
     private String snippet;
     private Double relevance;

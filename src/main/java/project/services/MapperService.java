@@ -15,11 +15,12 @@ public class MapperService {
     public final IndexationService indexationService;
     public final SiteService siteService;
 
-    public Set<Nodelink> getNodeLinkSet (String url) {
+    public String getNodeLinkSet (String url) {
         Mapper mapper = new Mapper(new Nodelink(url), pageCreatorService, indexationService);
         siteService.updateSiteIndexationStatus("INDEXING", url);
-        return new ForkJoinPool()
+        new ForkJoinPool()
                 .invoke(mapper);
+        return "сайт " + url + " проиндексирован";
     }
 
 }

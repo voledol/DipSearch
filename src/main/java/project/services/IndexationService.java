@@ -5,8 +5,8 @@ import dto.ResultStatisticDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.LemCreator;
@@ -25,11 +25,12 @@ import java.util.*;
  * @author VG
  * @version 0.1
  **/
+@Scope("prototype")
 @Service
 @RequiredArgsConstructor
 public class IndexationService {
     public  LemCreator lemCreator = new LemCreator();
-    public final PageService pageServise;
+    public final PageService pageService;
     public final LemmaServise lemmaServise;
     public final IndexService indexService;
     public final PageCreatorService pageCreatorService;
@@ -50,13 +51,13 @@ public class IndexationService {
             return ResponseEntity.ok(dto);
     }
     @SneakyThrows
-    public synchronized   void indexPage (String pageUrl) {
+    public void indexPage (String pageUrl) {
         pageCreatorService.createPage(pageUrl);
         Page page = new Page();
         String correctUrl = getCorrectUrl(pageUrl);
         Integer site_id = getSiteId(pageUrl);
         try {
-             page = pageServise.getPage(correctUrl, site_id);
+             page = pageService.getPage(correctUrl, site_id);
         }
         catch (NonUniqueResultException ex){
             System.out.println("страница уже проиндексирована");

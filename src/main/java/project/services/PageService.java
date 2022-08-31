@@ -9,9 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class PageService {
     public final PageRepository pageJPAInterface;
+
+    public PageService (PageRepository pageJPAInterface) {
+        this.pageJPAInterface = pageJPAInterface;
+    }
 
     public Page getPage (String path, Integer site_id) {
         return pageJPAInterface.findByPathAndSiteId(path, site_id).get(0);

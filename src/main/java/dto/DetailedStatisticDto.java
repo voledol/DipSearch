@@ -19,10 +19,10 @@ public class DetailedStatisticDto extends SiteDto implements Serializable {
         DetailedStatisticDto dto = new DetailedStatisticDto();
         dto.setName(siteFromDb.getName());
         dto.setStatus(siteFromDb.getStatus());
-        dto.setError(siteFromDb.getLastError());
         dto.setUrl(siteFromDb.getUrl());
         dto.setStatusTime(siteFromDb.getStatusTime().getTime());
         dto.setPages(pageCount.toString().trim());
+        dto.setError(siteFromDb.getLastError());
         dto.setLemmas(lemmaCount.toString().trim());
         return dto;
     }

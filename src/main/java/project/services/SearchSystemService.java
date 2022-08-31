@@ -6,18 +6,14 @@ import dto.ResultSearchDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jsoup.Jsoup;
-import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jca.cci.CciOperationNotSupportedException;
 import org.springframework.stereotype.Service;
 import project.LemCreator;
 import project.model.Index;
 import project.model.Lemma;
 import project.model.Page;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author VG
@@ -105,7 +101,7 @@ public class SearchSystemService {
             resultPage.setRelevance(getRelevance(page.getId(), lemmasFromDB));
             resultPage.setSiteName(siteName);
             resultPage.setSite(siteUrl.trim());
-            resultPage.setUrl(page.getPath());
+            resultPage.setUri(page.getPath());
             System.out.println(System.currentTimeMillis()-start + " без запроса в интернет");
             long start1 = System.currentTimeMillis();
             resultPage.setTitle(Jsoup.parse(page.getContent()).select("title").toString()

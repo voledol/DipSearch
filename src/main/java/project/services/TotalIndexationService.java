@@ -8,6 +8,7 @@ import project.Nodelink;
 import project.PageDuplicateCheck;
 import project.model.Site;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.util.List;
 import java.util.Set;
 
@@ -26,10 +27,11 @@ public class TotalIndexationService {
             siteService.updateSiteIndexationStatus("FAILED", st.getUrl());
         }
         for (Site st : sites) {
-          Set<Nodelink> resultSet = mapperService.getNodeLinkSet(st.getUrl());
-            resultSet.clear();
-            PageDuplicateCheck.existPages.clear();
-            siteService.updateSiteIndexationStatus("INDEXED", st.getUrl());
+            if(Main.isIndexationRunning){
+                System.out.println(mapperService.getNodeLinkSet(st.getUrl()));
+                PageDuplicateCheck.existPages.clear();
+                siteService.updateSiteIndexationStatus("INDEXED", st.getUrl());
+            }
         }
         ResultIndexing resultIndexing = new ResultIndexing();
         resultIndexing.setResult("true");
