@@ -47,17 +47,20 @@ public class DBStatisticService {
         Long lemmaCount = lemmaServise.getLemmaCount();
         Long siteCount = siteService.getSiteCount();
         boolean indexing = Main.isIndexationRunning;
-        return new TotalStatisticDto(pageCount,lemmaCount,siteCount,indexing);
+        return new TotalStatisticDto(pageCount, lemmaCount, siteCount, indexing);
     }
+
     private List<DetailedStatisticDto> getDetailedStatistic () {
         List<Site> siteList = siteService.getAllSites();
         List<DetailedStatisticDto> result = new ArrayList<>();
-        siteList.stream().forEach(site -> {Integer pageCount = pageService.getPageCountBySiteId(site.getId());
+        siteList.stream().forEach(site -> {
+            Integer pageCount = pageService.getPageCountBySiteId(site.getId());
             Integer lemmaCount = lemmaServise.getLemmaCountBySiteID(site.getId());
-            if(site.getStatusTime()==null){
+            if (site.getStatusTime() == null) {
                 site.setStatusTime(new Date(0));
             }
-            result.add(DetailedStatisticDto.getDto(site, pageCount, lemmaCount));} );
+            result.add(DetailedStatisticDto.getDto(site, pageCount, lemmaCount));
+        });
         return result;
     }
 

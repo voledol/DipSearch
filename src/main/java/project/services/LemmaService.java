@@ -19,10 +19,9 @@ public class LemmaService {
     public Lemma getLemmaByName (String lemma) {
         List<Lemma> lemmaList = lemmaRepository.findAllBylemmaOrderByFrequency(lemma);
         Lemma lemmaFound = new Lemma();
-        if(lemmaList.size() > 0){
+        if (lemmaList.size() > 0) {
             lemmaFound = lemmaList.get(0);
-        }
-        else {
+        } else {
             lemmaFound = null;
         }
         return lemmaFound;

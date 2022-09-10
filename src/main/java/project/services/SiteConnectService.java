@@ -39,6 +39,7 @@ public class SiteConnectService implements SiteConnection {
 
         } catch (IOException e) {
             siteConnectLogger.log(Level.ERROR, "Read time out " + url + e.getMessage());
+            IndexationService.lastIndexingError = "Read time out " + url + e.getMessage();
 
         }
         return response;
@@ -58,6 +59,7 @@ public class SiteConnectService implements SiteConnection {
             content = doc.select(selector);
         } catch (Exception e) {
             siteConnectLogger.log(Level.ERROR, "ошибка соединения с сайтом: " + Arrays.toString(e.getStackTrace()));
+            IndexationService.lastIndexingError = "ошибка соединения с сайтом: " + e.getMessage();
 
         }
         return content;

@@ -23,10 +23,10 @@ public class MapperService {
         Mapper mapper = new Mapper(new Nodelink(url), pageCreatorService, indexationService);
         siteService.updateSiteIndexationStatus("INDEXING", url);
         mapServiceLogger.log(Level.INFO, "Запущена индексация сайта: " + url);
-        Set<Nodelink> nodelinkResultSet =  new ForkJoinPool()
+        Set<Nodelink> nodelinkResultSet = new ForkJoinPool()
                 .invoke(mapper);
         mapServiceLogger.log(Level.INFO, "Проиндексирован сайт: " + url);
-        return nodelinkResultSet ;
+        return nodelinkResultSet;
     }
 
 }

@@ -1,6 +1,7 @@
 package project;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Класс получения свойст из файла application.yml
  *
@@ -35,8 +36,8 @@ public class PropertyLoader {
         return availableSites;
     }
 
-    public void setAvailaibleSites (AvailableSites availaibleSites) {
-        this.availableSites = availaibleSites;
+    public void setAvailableSites (AvailableSites availableSites) {
+        this.availableSites = availableSites;
     }
 
     /**

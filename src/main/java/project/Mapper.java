@@ -65,7 +65,7 @@ public class Mapper extends RecursiveTask<Set<Nodelink>> {
             Document doc = Jsoup.connect(parent.getUrl())
                     .maxBodySize(0)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0")
-                    .timeout(10000).ignoreHttpErrors(true).get();
+                    .timeout(5000).ignoreHttpErrors(true).get();
             Elements links = doc.select("a[href]");
             Set<String> absUrls = links.stream().map(el -> el.attr("abs:href"))
                     .filter(u -> !u.equals(parent.getUrl()))

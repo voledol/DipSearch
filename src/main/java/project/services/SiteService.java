@@ -50,12 +50,14 @@ public class SiteService {
     public Optional<Site> getSiteById (Integer id) {
         return siteRepository.findById(id);
     }
-    public void  updateSiteIndexationStatus(String status, String site){
+
+    public void updateSiteIndexationStatus (String status, String site) {
         siteRepository.updateSiteStatus(status, site);
     }
+
     @Transactional
-    public void updateSiteErrorAndStatusTime(String error, Date statusTime, Integer id){
-        siteRepository.updateSiteErrorAndStatus(error, statusTime,id);
+    public void updateSiteErrorAndStatusTime (String error, Date statusTime, Integer id) {
+        siteRepository.updateSiteErrorAndStatus(error, statusTime, id);
     }
 
 }

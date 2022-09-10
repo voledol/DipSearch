@@ -1,5 +1,3 @@
-
-
 package project.controllers;
 
 import dto.ResultIndexing;

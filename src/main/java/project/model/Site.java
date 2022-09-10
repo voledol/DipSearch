@@ -2,7 +2,6 @@ package project.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -48,6 +47,7 @@ public class Site {
      * Поле имя сайта
      */
     private String name;
+
     @Override
     public boolean equals (Object o) {
         if (this == o) return true;

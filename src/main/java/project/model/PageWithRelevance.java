@@ -23,7 +23,7 @@ public class PageWithRelevance implements Comparable<PageWithRelevance> {
 
     @Override
     public int compareTo (PageWithRelevance o) {
-        if(this.relevance > o.relevance){
+        if (this.relevance > o.relevance) {
             return 1;
         }
         return 0;

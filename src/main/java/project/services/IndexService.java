@@ -38,9 +38,10 @@ public class IndexService {
 
     public Index removePage (int page_id, int lemma_id) {
         List<Index> indices = indexRepository.removePage(page_id, lemma_id);
-        if(indices.size()!=0){
-            return  indices.get(0);
+        if (indices.size() != 0) {
+            return indices.get(0);
+        } else {
+            return null;
         }
-        else{return null;}
     }
 }

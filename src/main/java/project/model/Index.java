@@ -29,7 +29,7 @@ public class Index {
      */
     @Column (name = "lemma_id")
     public int lemmaId;
-    @Column(name = "site_id")
+    @Column (name = "site_id")
     public int siteId;
     /**
      * Поле ранга леммы
@@ -91,11 +91,12 @@ public class Index {
     public int hashCode () {
         return Objects.hash(getId(), getPageId(), getLemmaId(), getRank());
     }
-    public String toString(){
-      return   "id :" + getId() + "\n" +
-              "pageId :" + getPageId() + "\n" +
-              "lemmaId :" + getLemmaId() + "\n" +
-              "rank :" + getRank() + "\n" +
-              "siteId :" + getSiteId() + "\n";
+
+    public String toString () {
+        return "id :" + getId() + "\n" +
+                "pageId :" + getPageId() + "\n" +
+                "lemmaId :" + getLemmaId() + "\n" +
+                "rank :" + getRank() + "\n" +
+                "siteId :" + getSiteId() + "\n";
     }
 }

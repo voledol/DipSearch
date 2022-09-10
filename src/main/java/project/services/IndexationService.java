@@ -43,7 +43,6 @@ public class IndexationService {
     public final SiteConnectService siteConnection;
     public final SiteService siteService;
     public static String lastIndexingError;
-    public static Long statusTime;
     private Logger logger = LogManager.getLogger(IndexationService.class);
 
 
@@ -159,17 +158,6 @@ public class IndexationService {
         String[] urlSplit = url.split("/");
         return urlSplit[0] + "//" + urlSplit[1] + urlSplit[2];
     }
-
-//    public Integer getSiteId (String url) {
-//        String siteUrl = getSiteTitleUrl(url);
-//        List<Site> siteList = Main.availableSites;
-//        for (Site st : siteList) {
-//            if (st.getUrl().contains(siteUrl)) {
-//                return st.getId();
-//            }
-//        }
-//        return 0;
-//    }
 
     public String getContentWithSelector (String text, String selector) {
         Element content = Jsoup.parse(text);
