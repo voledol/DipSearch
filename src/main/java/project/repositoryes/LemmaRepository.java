@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface LemmaRepository extends JpaRepository<Lemma, Integer> {
-    Lemma findBylemma(String lemma);
+    List<Lemma> findAllBylemmaOrderByFrequency(String lemma);
     Lemma save(Lemma lemma);
     List<Lemma> findAllBySiteid (Integer site_id);
 

@@ -5,13 +5,19 @@ import dto.ResultPageDto;
 import dto.ResultSearchDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.StreamingHttpOutputMessage;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseBody;
 import project.LemCreator;
-import project.model.Index;
-import project.model.Lemma;
-import project.model.Page;
+import project.Main;
+import project.model.*;
 
 import java.util.*;
 
@@ -23,60 +29,66 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SearchSystemService {
     public final PageService pageServise;
-    public final LemmaServise lemmaServise;
+    public final LemmaService lemmaServise;
     public final IndexService indexService;
     public final SiteService siteService;
-//    public final SiteConnectService siteConnectService;
+    public final Logger searchSystemLogger = LogManager.getLogger(SearchSystemService.class);
     private LemCreator lemCreator = new LemCreator();
     private String searchRequest;
-    private int offset;
+    private Integer offset;
+    private Integer limit;
     private String site;
 
+
     @SneakyThrows
-    public ResponseEntity<ResultSearchDto> find (String searchRequest, String site, String offset, String limit) {
+    public ResponseEntity<ResultSearchDto> find (String searchRequest, String site, String stringOffset, String stringLimit) {
         this.searchRequest = searchRequest;
-        this.offset = Integer.parseInt(offset);
+        this.offset = Integer.parseInt(stringOffset);
+        this.limit = Integer.parseInt(stringLimit);
         this.site = site;
         HashMap<String, Integer> lemmasOfSearchRequest = new HashMap<>();
         List<Lemma> lemmasFromDB = new ArrayList<>();
         lemmasOfSearchRequest = lemCreator.getLem(searchRequest);
         lemmasFromDB = lemmaServise.findLemmaList(lemmasOfSearchRequest);
-        if(lemmasFromDB==null){
-            ResultSearchDto result = new ResultSearchDto();
-            result.setResult("false");
-            result.setError("неверный запрос");
-            return ResponseEntity.ok(result);
+        lemmasFromDB = requestCorrection(lemmasFromDB);
+        if (lemmasFromDB.size() == 0) {
+            return badRequest();
         }
-        Collections.sort(lemmasFromDB);
-        List<Index> finalInd = indexService.findIndexListByLemmaId(lemmasFromDB.get(0).getId());
+        List<Index> finalInd = findIndexListByFirstLemma(lemmasFromDB.get(0));
+
         for (int i = 1; i < lemmasFromDB.size(); i++) {
             finalInd = removePages(lemmasFromDB.get(i), finalInd);
         }
-        ResultSearchDto result = new ResultSearchDto();
         List<Page> resultsPage = getResultList(finalInd);
-        List<ResultPageDto> resultPageDtos = moveToResultPage(resultsPage, lemmasFromDB);
-        if(resultPageDtos.size() > Integer.parseInt(limit)){
-          resultPageDtos = resultPageDtos.subList(0, Integer.parseInt(limit));
-        }
+        List<ResultPageDto> resultPageDtoList = moveToResultPage(getRelevance(resultsPage, lemmasFromDB));
+        resultPageDtoList = subListByLimit(resultPageDtoList, limit);
+        System.out.println(resultPageDtoList);
         if (resultsPage.isEmpty()) {
-            result.setResult("false");
-            result.setError("error задан пустой поисковой запрос, или страница не найдена");
-            return ResponseEntity.ok(result);
+            return badRequest();
         }
-        result.setResult("true");
-        result.setCount("" + resultPageDtos.size());
-        result.setData(resultPageDtos);
-        return ResponseEntity.ok(result);
+        System.out.println(resultPageDtoList);
+        return successRequest(resultPageDtoList);
     }
-    public List<Index> removePages (Lemma lem, List<Index> ind) {
-        List<Index> finPages = new ArrayList<>();
-        for (Index index : ind) {
-            Index pagesId = indexService.removePage(index.pageid, lem.getId());
-            if(pagesId!=null){
-                finPages.add(index);
+
+    public List<Lemma> requestCorrection (List<Lemma> lemmaListForCorrection) {
+        lemmaListForCorrection.removeIf(Objects::isNull);
+        return lemmaListForCorrection;
+    }
+
+    public List<Index> findIndexListByFirstLemma (Lemma lemma) {
+        List<Index> indexListByFirstLemma = new ArrayList<>();
+        if (site != null) {
+            int siteId = 0;
+            for (Site siteObject : Main.availableSites) {
+                if (siteObject.getUrl().equals(site)) {
+                    siteId = siteObject.getId();
+                }
             }
+            indexListByFirstLemma = indexService.findIndexListByLemmaIdAndSiteId(lemma.id, siteId);
+        } else {
+            indexListByFirstLemma = indexService.findIndexListByLemmaId(lemma.id);
         }
-        return finPages;
+        return indexListByFirstLemma;
     }
 
     @SneakyThrows
@@ -84,53 +96,74 @@ public class SearchSystemService {
         long start = System.currentTimeMillis();
         List<Page> results = new ArrayList<>();
         for (Index index : ind) {
-            Page page = pageServise.getPageById(index.getPageid()).get();
+            Page page = pageServise.getPageById(index.getPageId()).get();
             results.add(page);
         }
-        System.out.println((System.currentTimeMillis()-start) + "получение финального списка старниц");
+        searchSystemLogger.log(Level.INFO, "получение финального списка старниц: " + (System.currentTimeMillis() - start) + "  " + results.size());
         return results;
     }
-    public List<ResultPageDto> moveToResultPage (List<Page> pages, List<Lemma> lemmasFromDB) {
+
+    public List<Index> removePages (Lemma lem, List<Index> ind) {
+        long start = System.currentTimeMillis();
+        List<Index> finPages = new ArrayList<>();
+        for (Index index : ind) {
+            Index pagesId = indexService.removePage(index.pageId, lem.getId());
+            if (pagesId != null) {
+                finPages.add(index);
+            }
+        }
+        searchSystemLogger.log(Level.INFO, "отсев страниц: " + (System.currentTimeMillis() - start));
+        return finPages;
+    }
+
+
+    public List<PageWithRelevance> getRelevance (List<Page> pages, List<Lemma> lemmas) {
+        long start = System.currentTimeMillis();
+        List<PageWithRelevance> pageWithRelevances = new ArrayList<>();
+        for (Page page_id : pages) {
+            double rank = 0.0;
+            PageWithRelevance pageWithRelevance = new PageWithRelevance();
+            for (Lemma lemma : lemmas) {
+                Index index = indexService.findIndexByPage_idAndLemm_id(page_id.getId(), lemma.getId());
+                rank += index.rank;
+            }
+            pageWithRelevance.setPage(page_id);
+            pageWithRelevance.setRelevance(rank);
+            pageWithRelevances.add(pageWithRelevance);
+        }
+        Collections.sort(pageWithRelevances);
+        searchSystemLogger.log(Level.INFO, "расчет релевантности страницы: " + (System.currentTimeMillis() - start));
+
+        return pageWithRelevances;
+    }
+
+    public List<ResultPageDto> moveToResultPage (List<PageWithRelevance> page) {
 
         List<ResultPageDto> result = new ArrayList<>();
-        for (Page page : pages) {
-            long start = System.currentTimeMillis();
+        long startMoveToResult = System.currentTimeMillis();
+        for (PageWithRelevance pageToMove : page) {
+            if (result.size() == 10) {
+                continue;
+            }
             ResultPageDto resultPage = new ResultPageDto();
-            String siteName = getSiteName(page);
-            String siteUrl = getSiteUrl(page);
-            resultPage.setRelevance(getRelevance(page.getId(), lemmasFromDB));
+            String siteName = getSiteName(pageToMove.getPage());
+            String siteUrl = getSiteUrl(pageToMove.getPage());
+            resultPage.setRelevance(pageToMove.relevance);
             resultPage.setSiteName(siteName);
             resultPage.setSite(siteUrl.trim());
-            resultPage.setUri(page.getPath());
-            System.out.println(System.currentTimeMillis()-start + " без запроса в интернет");
-            long start1 = System.currentTimeMillis();
-            resultPage.setTitle(Jsoup.parse(page.getContent()).select("title").toString()
+            resultPage.setUri(pageToMove.page.getPath());
+            resultPage.setTitle(Jsoup.parse(pageToMove.page.getContent()).select("title").toString()
                     .replaceAll("<title>", "").replaceAll("</title>", ""));
-            System.out.println(System.currentTimeMillis() - start1 + "запрос в интернет");
-            resultPage.setSnippet(getSnippet(page.getContent(), searchRequest));
+            resultPage.setSnippet(getSnippet(pageToMove.getPage().getContent(), searchRequest));
             result.add(resultPage);
         }
-
-        Collections.sort(result);
+        searchSystemLogger.log(Level.INFO, "преобразование страниц в ответ: " + (System.currentTimeMillis() - startMoveToResult));
         return result;
     }
 
-    public Double getRelevance (int page_id, List<Lemma> lems) {// оптимизировать расчет релевантности
-        long start = System.currentTimeMillis();
-        double rank = 0.0;
-        for (Lemma lemma : lems) {
-            Index index = indexService.findIndexByPage_idAndLemm_id(page_id, lemma.getId());
-            rank += index.rank;
-        }
-        System.out.println((System.currentTimeMillis()-start) + " расчет релевантности");
-        return rank;
-    }
-
-
-
 
     public String getSnippet (String content, String searchRequest) {
-        String[] wordList = searchRequest.split(" ");
+        String[] wordList = searchRequest.split("\\s");
         StringBuilder snippetToString = new StringBuilder();
         Integer start = content.toLowerCase(Locale.ROOT).indexOf(wordList[0].toLowerCase(Locale.ROOT));
         if (start != -1) {
@@ -146,6 +179,7 @@ public class SearchSystemService {
         return snippetToString.toString();
     }
 
+
     public String getSiteName (Page page) {
         return siteService.getSiteById(page.getSiteId()).get().getName();
     }
@@ -154,5 +188,27 @@ public class SearchSystemService {
         return siteService.getSiteById(page.getSiteId()).get().getUrl();
     }
 
+    public ResponseEntity<ResultSearchDto> badRequest () {
+        ResultSearchDto result = new ResultSearchDto();
+        result.setResult("false");
+        result.setError("ОШИБКА: На заданном сайте ничего не найдено, или задан пустой поисковой запрос");
+        return ResponseEntity.ok(result);
+    }
 
+    public ResponseEntity<ResultSearchDto> successRequest (List<ResultPageDto> resultPageDtoList) {
+        ResultSearchDto result = new ResultSearchDto();
+        result.setResult("true");
+        result.setCount(String.valueOf(resultPageDtoList.size()));
+        result.setData(resultPageDtoList);
+        return ResponseEntity.ok(result);
+    }
+
+    public List<ResultPageDto> subListByLimit (List<ResultPageDto> result, Integer limit) {
+        if (result.size() > limit) {
+            result = result.subList(0, limit);
+            return result;
+        } else {
+            return result;
+        }
+    }
 }

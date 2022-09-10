@@ -13,8 +13,12 @@ public interface IndexRepository extends JpaRepository<Index, Integer> {
     Index save(Index index);
     @Query("FROM Index Where page_id = :page_id")
     List<Index> findAllByPageid(@Param("page_id") Integer page_id);
+    @Query("FROM Index Where page_id = 1 and lemma_id = 1" )
     List<Index> findAllByPageidAndLemmaid (Integer page_id, Integer lemma_id);
+    @Query("FROM Index Where lemma_id = :lemma_id")
     List<Index> findAllByLemmaid(Integer lemma_id);
     @Query("FROM Index where lemma_id = :lemma_id and page_id = :page_id")
-    Index removePage(@Param("page_id") int page_id,@Param("lemma_id") int lemma_id);
+    List<Index> removePage(@Param("page_id") int page_id,@Param("lemma_id") int lemma_id);
+    @Query("FROM Index where lemma_id = :lemma_id and site_id = :site_id")
+    List<Index> findAllByLemmaidAndSiteId(Integer lemma_id, Integer site_id);
 }

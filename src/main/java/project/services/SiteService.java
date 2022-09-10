@@ -7,6 +7,7 @@ import project.model.Site;
 import project.repositoryes.PageRepository;
 import project.repositoryes.SiteRepository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,9 @@ public class SiteService {
     }
     public void  updateSiteIndexationStatus(String status, String site){
         siteRepository.updateSiteStatus(status, site);
+    }
+    public void updateSiteErrorAndStatusTime(String error, Date statusTime, Integer id){
+        siteRepository.updateSiteErrorAndStatus(statusTime, error,id);
     }
 
 }

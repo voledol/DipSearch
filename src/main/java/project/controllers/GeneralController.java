@@ -39,7 +39,7 @@ public class GeneralController {
     }
     @GetMapping ("/search")
     @ResponseBody
-    public ResponseEntity<ResultSearchDto> find (@RequestParam("query") String request, @RequestParam(name = "site", required = false)String site, @RequestParam("offset") String offset, @RequestParam("limit") String limit){
+    public ResponseEntity<?> find (@RequestParam("query") String request, @RequestParam(name = "site", required = false)String site, @RequestParam("offset") String offset, @RequestParam("limit") String limit){
         return searchSystemService.find(request, site, offset, limit );
 
     }

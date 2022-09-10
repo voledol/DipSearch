@@ -2,6 +2,10 @@ package project.services;
 
 import dto.ResultIndexing;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import project.Main;
 import project.Nodelink;
@@ -19,8 +23,16 @@ public class TotalIndexationService {
     public final PageCreatorService pageCreatorService;
     public final MapperService mapperService;
     public final SiteService siteService;
+    public final Logger totalIndexationLogger = LogManager.getLogger(TotalIndexationService.class);
 
     public ResultIndexing startTotalIndexing () {
+        if(Main.isIndexationRunning){
+            totalIndexationLogger.log(Level.INFO, "ИНДЕКСАЦИЯ УЖЕ ЗАПУЩЕНА");
+            ResultIndexing resultIndexing = new ResultIndexing();
+            resultIndexing.setResult("false");
+            return resultIndexing;
+        }
+        totalIndexationLogger.log(Level.INFO, "ЗАПУЩЕНА ПОЛНАЯ ИНДЕКСАЦИЯ САЙТОВ");
         List<Site> sites = siteService.getAllSites();
         Main.isIndexationRunning = true;
         for(Site st: sites){
@@ -28,7 +40,7 @@ public class TotalIndexationService {
         }
         for (Site st : sites) {
             if(Main.isIndexationRunning){
-                System.out.println(mapperService.getNodeLinkSet(st.getUrl()));
+                mapperService.getNodeLinkSet(st.getUrl());
                 PageDuplicateCheck.existPages.clear();
                 siteService.updateSiteIndexationStatus("INDEXED", st.getUrl());
             }
@@ -41,6 +53,7 @@ public class TotalIndexationService {
         Main.isIndexationRunning = false;
         ResultIndexing resultIndexing = new ResultIndexing();
         resultIndexing.setResult("true");
+        totalIndexationLogger.log(Level.INFO, "НАЧАТА ОСТАНОВКА ИНДЕКСАЦИИ САЙТОВ");
         return resultIndexing;
     }
 }

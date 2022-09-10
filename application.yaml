@@ -5,7 +5,7 @@ spring:
     password: Gorila123
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
       dialect: DB2Dialect
 available-sites:
   sites:

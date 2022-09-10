@@ -23,12 +23,14 @@ public class Index {
      * Поле ID страницы
      */
     @Column (name = "page_id")
-    public int pageid;
+    public int pageId;
     /**
      * Поле Id леммы
      */
     @Column (name = "lemma_id")
-    public int lemmaid;
+    public int lemmaId;
+    @Column(name = "site_id")
+    public int siteId;
     /**
      * Поле ранга леммы
      */
@@ -54,31 +56,46 @@ public class Index {
         this.rank = rank;
     }
 
-    public int getPageid () {
-        return pageid;
+    public int getPageId () {
+        return pageId;
     }
 
-    public void setPageid (int pageid) {
-        this.pageid = pageid;
+    public void setPageId (int pageId) {
+        this.pageId = pageId;
     }
 
-    public int getLemmaid () {
-        return lemmaid;
+    public int getLemmaId () {
+        return lemmaId;
     }
 
-    public void setLemmaid (int lemmaid) {
-        this.lemmaid = lemmaid;
+    public void setLemmaId (int lemmaId) {
+        this.lemmaId = lemmaId;
+    }
+
+    public int getSiteId () {
+        return siteId;
+    }
+
+    public void setSiteId (int siteId) {
+        this.siteId = siteId;
     }
 
     @Override
     public boolean equals (Object o) {
         if (!(o instanceof Index)) return false;
         Index index = (Index) o;
-        return getId() == index.getId() && getPageid() == index.getPageid() && getLemmaid() == index.getLemmaid() && Float.compare(index.getRank(), getRank()) == 0;
+        return getId() == index.getId() && getPageId() == index.getPageId() && getLemmaId() == index.getLemmaId() && Float.compare(index.getRank(), getRank()) == 0;
     }
 
     @Override
     public int hashCode () {
-        return Objects.hash(getId(), getPageid(), getLemmaid(), getRank());
+        return Objects.hash(getId(), getPageId(), getLemmaId(), getRank());
+    }
+    public String toString(){
+      return   "id :" + getId() + "\n" +
+              "pageId :" + getPageId() + "\n" +
+              "lemmaId :" + getLemmaId() + "\n" +
+              "rank :" + getRank() + "\n" +
+              "siteId :" + getSiteId() + "\n";
     }
 }

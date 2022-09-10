@@ -1,6 +1,7 @@
 package project;
 
 
+
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 
@@ -17,13 +18,11 @@ import java.util.List;
  **/
 public class LemCreator {
     /**
-     * Поле списка лемма лемма/ранг
-     */
-//    public  HashMap<String, Integer> lemmas = new HashMap<>();
-    /**
      * Поле морфологических частей речи подлежащих удалению из списка лемм
      */
-    public String[] partsOfSpeech = {"СОЮЗ", "МЕЖД", "ПРЕДЛ", "ЧАСТ"};
+    private final  String[] PARTS_OF_SPEECH = {"СОЮЗ", "МЕЖД", "ПРЕДЛ", "ЧАСТ"};
+    private final String DELETE_ENGLISH_REG = "\\s+";
+    private final String DELETE_DOUBLE_SPACES =  "";
     public LuceneMorphology luceneMorphology = getRussianMorhology();
 
     /**
@@ -34,8 +33,8 @@ public class LemCreator {
      */
     public HashMap<String, Integer> getLem (String text) {
         String[] words;
-        words = text.toLowerCase().replaceAll("[^А-я\\s]", "").trim()
-                .replaceAll("\\s+", " ")
+        words = text.toLowerCase().replaceAll(DELETE_ENGLISH_REG, "").trim()
+                .replaceAll(DELETE_DOUBLE_SPACES, " ")
                 .split("\\s");
         List<List<String>> lemWorkArray = new ArrayList<>();
         for (int i = 0; i < words.length; i++) {
@@ -60,8 +59,8 @@ public class LemCreator {
      */
     public boolean isWord (String word) {
         boolean isWord = true;
-        for (int i = 0; i < partsOfSpeech.length; i++) {
-            if (word.contains(partsOfSpeech[i])) {
+        for (int i = 0; i < PARTS_OF_SPEECH.length; i++) {
+            if (word.contains(PARTS_OF_SPEECH[i])) {
                 isWord = false;
             }
         }

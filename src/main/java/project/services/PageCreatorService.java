@@ -34,15 +34,14 @@ public class PageCreatorService {
         Connection.Response response = siteConnection.getConnection(url);
         Page page = new Page();
         Elements content = siteConnection.getContent("html");
-        page.setPath(getCorrectUrl(url));
+        page.setPath(getUrlWithoutSiteName(url));
         if (page.getPath().isEmpty()) {
             page.setPath("/");
         }
         page.setContent(content.toString());
         page.setCode(response.statusCode());
         page.setSiteId(getSiteId(url));
-        pageServise.savePage(page);
-        return page;
+        return pageServise.savePage(page);
     }
 
     public int getSiteId (String url) {
@@ -54,7 +53,7 @@ public class PageCreatorService {
         }
         return id;
     }
-    public String getCorrectUrl (String url) {
+    public String getUrlWithoutSiteName (String url) {
         String[] split = url.split("/");
         StringBuilder correctUrl = new StringBuilder();
         if (split.length <= 3) {

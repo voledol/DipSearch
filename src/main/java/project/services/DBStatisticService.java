@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DBStatisticService {
     private final PageService pageService;
-    private final LemmaServise lemmaServise;
+    private final LemmaService lemmaServise;
     private final SiteService siteService;
 
     public ResponseEntity<ResultStatisticDto> getStatistic () {

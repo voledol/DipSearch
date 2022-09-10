@@ -20,6 +20,7 @@ public class ResultStatisticDto implements Serializable {
     public static ResultStatisticDto getFalseStatisticResult (String error) {
         ResultStatisticDto dto = new ResultStatisticDto();
         dto.setResult("true");
+        dto.setError(error);
         dto.setStatisticDto(null);
         return dto;
     }

@@ -16,9 +16,9 @@ public class PageService {
         this.pageJPAInterface = pageJPAInterface;
     }
 
-    public Page getPage (String path, Integer site_id) {
-        return pageJPAInterface.findByPathAndSiteId(path, site_id).get(0);
-    }
+//    public Page getPage (String path, Integer site_id) {
+//        return pageJPAInterface.findByPathAndSiteId(path, site_id).get(0);
+//    }
 
     public Page savePage (Page page) {
         return pageJPAInterface.save(page);

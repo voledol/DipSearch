@@ -1,5 +1,8 @@
 package project.services;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -8,6 +11,7 @@ import org.springframework.stereotype.Service;
 import project.repositoryes.SiteConnection;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Класс выполнящий соедиение с сайтом
@@ -15,6 +19,7 @@ import java.io.IOException;
 @Service
 public class SiteConnectService implements SiteConnection {
     public Connection.Response response;
+    public final Logger siteConnectLogger = LogManager.getLogger(SiteConnectService.class);
 
     /**
      * функция выполняющая соединение с сайтом
@@ -29,11 +34,12 @@ public class SiteConnectService implements SiteConnection {
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0")
                     .referrer("http://www.google.com")
                     .ignoreHttpErrors(true)
-                    .timeout(10000)
+                    .timeout(5000)
                     .execute();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            siteConnectLogger.log(Level.ERROR, "Read time out " + url + e.getMessage());
+
         }
         return response;
     }
@@ -51,7 +57,8 @@ public class SiteConnectService implements SiteConnection {
             Document doc = response.parse();
             content = doc.select(selector);
         } catch (Exception e) {
-            e.printStackTrace();
+            siteConnectLogger.log(Level.ERROR, "ошибка соединения с сайтом: " + Arrays.toString(e.getStackTrace()));
+
         }
         return content;
     }
