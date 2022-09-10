@@ -6,8 +6,6 @@
         <!-- JDBC Database connection settings -->
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="connection.url">jdbc:mysql://127.0.0.1:3306/search_engine?useSSL=false&amp;serverTimezone=UTC</property>
-        <property name="connection.username">valgall</property>
-        <property name="connection.password">Gorila123</property>
         <!-- JDBC connection pool settings ... using built-in test pool -->
         <property name="connection.pool_size">20</property>
         <!-- Select our SQL dialect -->

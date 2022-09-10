@@ -25,9 +25,11 @@ public interface SiteRepository extends JpaRepository<Site, Integer> {
     @Query ("update Site set status =:status where url = :site")
     void updateSiteStatus (@Param ("status") String status, @Param ("site") String site);
 
-    @Query ("update Site set status_time = :statusTime, last_error = :error  where id = :siteId ")
-    void updateSiteErrorAndStatus (@Param ("statusTime") Date statusTime,
+    @Modifying
+    @Query ("update Site set status_time = :statusTime, last_error = :error  where id = :siteId")
+    void updateSiteErrorAndStatus (
                                    @Param ("error") String error,
+                                   @Param ("statusTime") Date statusTime,
                                    @Param ("siteId") Integer id);
 
 }

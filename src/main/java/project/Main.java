@@ -2,12 +2,12 @@ package project;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-//import project.controllers.HibernateController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import project.model.Site;
 import project.model.SiteStatus;
 import project.services.SiteConnectService;
+import project.services.SiteService;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class Main {
     /** Поле класса project.PropertyLoader {@link PropertyLoader}*/
     public static PropertyLoader propertyes = new PropertyLoader();
     /**Поле создания класса соединения с сайтом{@link SiteConnectService}*/
-    public static List<Site> availableSites = new ArrayList<>();
+    public static List<Site> availableSites = new ArrayList<Site>();
     public static Boolean isIndexationRunning = false;
     public static void main(String[] args){
        propertyes = readApplication();
@@ -35,7 +35,7 @@ public class Main {
       ObjectMapper  mapper = new ObjectMapper(new YAMLFactory());
       mapper.findAndRegisterModules();
         try {
-            propertyes = mapper.readValue(new File("C:\\Users\\voled\\IdeaProjects\\DipSearch\\application.yaml"), PropertyLoader.class);
+            propertyes = mapper.readValue(new File("application.yaml"), PropertyLoader.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

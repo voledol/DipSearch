@@ -2,6 +2,7 @@ package project.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.Main;
 import project.model.Site;
 import project.repositoryes.PageRepository;
@@ -52,8 +53,9 @@ public class SiteService {
     public void  updateSiteIndexationStatus(String status, String site){
         siteRepository.updateSiteStatus(status, site);
     }
+    @Transactional
     public void updateSiteErrorAndStatusTime(String error, Date statusTime, Integer id){
-        siteRepository.updateSiteErrorAndStatus(statusTime, error,id);
+        siteRepository.updateSiteErrorAndStatus(error, statusTime,id);
     }
 
 }

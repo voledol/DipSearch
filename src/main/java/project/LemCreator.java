@@ -21,8 +21,8 @@ public class LemCreator {
      * Поле морфологических частей речи подлежащих удалению из списка лемм
      */
     private final  String[] PARTS_OF_SPEECH = {"СОЮЗ", "МЕЖД", "ПРЕДЛ", "ЧАСТ"};
-    private final String DELETE_ENGLISH_REG = "\\s+";
-    private final String DELETE_DOUBLE_SPACES =  "";
+    private final String DELETE_ENGLISH_REG = "[^А-я\\s]";
+    private final String DELETE_DOUBLE_SPACES =  "\\s+";
     public LuceneMorphology luceneMorphology = getRussianMorhology();
 
     /**

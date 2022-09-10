@@ -19,7 +19,7 @@ import project.repositoryes.SiteConnection;
 @Service
 @RequiredArgsConstructor
 public class PageCreatorService {
-    public final PageService pageServise;
+    public final PageService pageServiсe;
     public final SiteConnection siteConnection;
     public final SiteService siteService;
 
@@ -41,7 +41,7 @@ public class PageCreatorService {
         page.setContent(content.toString());
         page.setCode(response.statusCode());
         page.setSiteId(getSiteId(url));
-        return pageServise.savePage(page);
+        return pageServiсe.savePage(page);
     }
 
     public int getSiteId (String url) {

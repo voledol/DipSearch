@@ -1,11 +1,10 @@
+
+
 package project.controllers;
 
 import dto.ResultIndexing;
-import dto.ResultSearchDto;
 import dto.ResultStatisticDto;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +28,7 @@ public class GeneralController {
     public ResponseEntity<ResultStatisticDto> statistic () {
         siteService.saveSitesIfNotExist();
         Main.availableSites = siteService.getAllSites();
+        System.out.println(Main.availableSites.get(0).getId());
         return dbStatisticService.getStatistic();
     }
 
@@ -37,20 +37,23 @@ public class GeneralController {
     public ResponseEntity<ResultStatisticDto> indexingPage (String url) {
         return indexationService.indexPageRequest(url);
     }
+
     @GetMapping ("/search")
     @ResponseBody
-    public ResponseEntity<?> find (@RequestParam("query") String request, @RequestParam(name = "site", required = false)String site, @RequestParam("offset") String offset, @RequestParam("limit") String limit){
-        return searchSystemService.find(request, site, offset, limit );
+    public ResponseEntity<?> find (@RequestParam ("query") String request, @RequestParam (name = "site", required = false) String site, @RequestParam ("offset") String offset, @RequestParam ("limit") String limit) {
+        return searchSystemService.find(request, site, offset, limit);
 
     }
+
     @GetMapping ("/startIndexing")
     @ResponseBody
-    public ResponseEntity<ResultIndexing> startIndexing(){
+    public ResponseEntity<ResultIndexing> startIndexing () {
         return ResponseEntity.ok(totalIndexationService.startTotalIndexing());
     }
+
     @GetMapping ("/stopIndexing")
     @ResponseBody
-    public ResponseEntity<ResultIndexing> stopIndexing(){
+    public ResponseEntity<ResultIndexing> stopIndexing () {
         return ResponseEntity.ok(totalIndexationService.stopTotalIndexing());
     }
 }

@@ -20,7 +20,6 @@ import project.model.Lemma;
 import project.model.Page;
 import project.model.Site;
 
-import javax.persistence.NonUniqueResultException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -72,13 +71,6 @@ public class IndexationService {
         if (!isInSitesList(pageUrl)) {
             unAvailableSiteMessage();
         }
-//        String correctUrl = getUrlWithoutSiteMain(pageUrl);
-//        Integer site_id = getSiteId(pageUrl);
-//        try {
-//            page = pageService.getPage(correctUrl, site_id);
-//        } catch (NonUniqueResultException ex) {
-//            logger.log(Level.INFO, "Страница Уже проиндексирована");
-//        }
         HashMap<String, Integer> titleLemma;
         HashMap<String, Integer> bodyLemma;
         titleLemma = lemCreator.getLem(getContentWithSelector(page.getContent(), "title"));
@@ -151,17 +143,6 @@ public class IndexationService {
         return lemmaRank;
     }
 
-//    public String getUrlWithoutSiteMain (String url) {
-//        String[] split = url.split("/");
-//        StringBuilder correctUrl = new StringBuilder();
-//        if (split.length <= 3) {
-//            return "/";
-//        }
-//        for (int i = 3; i < split.length; i++) {
-//            correctUrl.append("/").append(split[i]);
-//        }
-//        return String.valueOf(correctUrl);
-//    }
 
     public boolean isInSitesList (String url) {
         String siteUrl = getSiteTitleUrl(url);
@@ -198,7 +179,8 @@ public class IndexationService {
     public void updateSiteInform (String error, Date statusTime, Integer siteId) {
         siteService.updateSiteErrorAndStatusTime(error, statusTime, siteId);
     }
-    public ResponseEntity<ResultIndexing> unAvailableSiteMessage(){
+
+    public ResponseEntity<ResultIndexing> unAvailableSiteMessage () {
         return ResponseEntity.ok(ResultIndexing.pageIndexationFalse());
     }
 
