@@ -1,10 +1,10 @@
 package project.services;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.model.Page;
 import project.repositoryes.PageRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,5 +42,9 @@ public class PageService {
             pageCount = pages.size();
         }
         return pageCount;
+    }
+@Transactional
+    public void deleteAllPagesWithSiteId(Integer id) {
+        pageJPAInterface.deleteAllBySiteId(id);
     }
 }

@@ -2,19 +2,15 @@ package project.services;
 
 import dto.ResultIndexing;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import project.Main;
-import project.Nodelink;
 import project.PageDuplicateCheck;
 import project.model.Site;
 
-import javax.xml.bind.SchemaOutputResolver;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -23,10 +19,13 @@ public class TotalIndexationService {
     public final PageCreatorService pageCreatorService;
     public final MapperService mapperService;
     public final SiteService siteService;
+    public final IndexService indexService;
+    public final PageService pageService;
+    public final LemmaService lemmaService;
     public final Logger totalIndexationLogger = LogManager.getLogger(TotalIndexationService.class);
 
-    public ResultIndexing startTotalIndexing () {
-        if(Main.isIndexationRunning){
+    public ResultIndexing startTotalIndexing() {
+        if (Main.isIndexationRunning) {
             totalIndexationLogger.log(Level.INFO, "ИНДЕКСАЦИЯ УЖЕ ЗАПУЩЕНА");
             ResultIndexing resultIndexing = new ResultIndexing();
             resultIndexing.setResult("false");
@@ -35,21 +34,28 @@ public class TotalIndexationService {
         totalIndexationLogger.log(Level.INFO, "ЗАПУЩЕНА ПОЛНАЯ ИНДЕКСАЦИЯ САЙТОВ");
         List<Site> sites = siteService.getAllSites();
         Main.isIndexationRunning = true;
-        for(Site st: sites){
-            siteService.updateSiteIndexationStatus("FAILED", st.getUrl());
-        }
         for (Site st : sites) {
-            if(Main.isIndexationRunning){
+            if (st.getStatus().equals("INDEXED")) {
+                indexService.deleteAllIndexWithSiteId(st.getId());
+                pageService.deleteAllPagesWithSiteId(st.getId());
+                lemmaService.deleteAllLemmaWithSiteId(st.getId());
+            }
+            if (Main.isIndexationRunning) {
+                siteService.updateSiteIndexationStatus("FAILED", st.getUrl());
                 mapperService.getNodeLinkSet(st.getUrl());
                 PageDuplicateCheck.existPages.clear();
-                siteService.updateSiteIndexationStatus("INDEXED", st.getUrl());
+
+            } else {
+                continue;
             }
+            siteService.updateSiteIndexationStatus("INDEXED", st.getUrl());
         }
         ResultIndexing resultIndexing = new ResultIndexing();
         resultIndexing.setResult("true");
         return resultIndexing;
     }
-    public ResultIndexing stopTotalIndexing(){
+
+    public ResultIndexing stopTotalIndexing() {
         Main.isIndexationRunning = false;
         ResultIndexing resultIndexing = new ResultIndexing();
         resultIndexing.setResult("true");

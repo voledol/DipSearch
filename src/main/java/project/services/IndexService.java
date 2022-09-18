@@ -44,4 +44,8 @@ public class IndexService {
             return null;
         }
     }
+
+    public void deleteAllIndexWithSiteId (Integer id) {
+        indexRepository.deleteAllById(id);
+    }
 }

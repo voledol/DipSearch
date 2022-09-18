@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import project.model.Lemma;
 import project.repositoryes.LemmaRepository;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ public class LemmaService {
     public final LemmaRepository lemmaRepository;
 
 
-    public Lemma getLemmaByName (String lemma) {
+    public Lemma getLemmaByName(String lemma) {
         List<Lemma> lemmaList = lemmaRepository.findAllBylemmaOrderByFrequency(lemma);
         Lemma lemmaFound = new Lemma();
         if (lemmaList.size() > 0) {
@@ -27,15 +28,15 @@ public class LemmaService {
         return lemmaFound;
     }
 
-    public void updateLemma (Lemma lemma) {
+    public void updateLemma(Lemma lemma) {
         lemmaRepository.save(lemma);
     }
 
-    public void addLemma (Lemma lemma) {
+    public void addLemma(Lemma lemma) {
         lemmaRepository.save(lemma);
     }
 
-    public List<Lemma> findLemmaList (HashMap<String, Integer> searchString) {
+    public List<Lemma> findLemmaList(HashMap<String, Integer> searchString) {
         List<Lemma> lemmaList = new ArrayList<>();
         for (Map.Entry entry : searchString.entrySet()) {
 
@@ -45,15 +46,15 @@ public class LemmaService {
         return lemmaList;
     }
 
-    public long getLemmaCount () {
+    public long getLemmaCount() {
         return lemmaRepository.count();
     }
 
-    public List<Lemma> getLemmaListBySiteId (Integer site_id) {
+    public List<Lemma> getLemmaListBySiteId(Integer site_id) {
         return lemmaRepository.findAllBySiteid(site_id);
     }
 
-    public Integer getLemmaCountBySiteID (Integer site_id) {
+    public Integer getLemmaCountBySiteID(Integer site_id) {
         Integer lemmaCount;
         List<Lemma> lemmaList = getLemmaListBySiteId(site_id);
         if (lemmaList == null) {
@@ -63,5 +64,10 @@ public class LemmaService {
             lemmaCount = lemmaList.size();
         }
         return lemmaCount;
+    }
+
+    @Transactional
+    public void deleteAllLemmaWithSiteId(Integer id) {
+        lemmaRepository.deleteAllBySiteid(id);
     }
 }
