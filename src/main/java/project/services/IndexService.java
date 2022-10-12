@@ -17,7 +17,7 @@ public class IndexService {
     }
 
     public Index findIndexByPage_idAndLemm_id (Integer page_id, Integer lemm_id) {
-        List<Index> index = indexRepository.findAllByPageidAndLemmaid(page_id, lemm_id);
+        List<Index> index = indexRepository.findAllByPageIdAndLemmaId(page_id, lemm_id);
         if (index.size() > 0) {
             return index.get(0);
         } else {
@@ -29,7 +29,7 @@ public class IndexService {
     }
 
     public List<Index> findIndexListByLemmaId (Integer lemma_id) {
-        return indexRepository.findAllByLemmaid(lemma_id);
+        return indexRepository.findAllByLemmaId(lemma_id);
     }
 
     public List<Index> findIndexListByLemmaIdAndSiteId (Integer lemma_id, Integer site_id) {

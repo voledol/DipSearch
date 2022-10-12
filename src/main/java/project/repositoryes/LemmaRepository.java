@@ -16,8 +16,8 @@ public interface LemmaRepository extends JpaRepository<Lemma, Integer> {
 
     Lemma save(Lemma lemma);
 
-    List<Lemma> findAllBySiteid(Integer site_id);
+    List<Lemma> findAllBySiteId (Integer site_id);
 
     @Transactional
-    void deleteAllBySiteid( Integer id);
+    void deleteAllBySiteId (Integer id);
 }

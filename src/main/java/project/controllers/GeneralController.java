@@ -26,7 +26,6 @@ public class GeneralController {
     public ResponseEntity<ResultStatisticDto> statistic () {
         siteService.saveSitesIfNotExist();
         Main.availableSites = siteService.getAllSites();
-        System.out.println(Main.availableSites.get(0).getId());
         return dbStatisticService.getStatistic();
     }
 

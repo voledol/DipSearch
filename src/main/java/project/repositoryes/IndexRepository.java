@@ -17,11 +17,11 @@ public interface IndexRepository extends JpaRepository<Index, Integer> {
     @Query(value = "FROM Index Where page_id = :page_id", nativeQuery = true)
     List<Index> findAllByPageid(@Param("page_id") Integer page_id);
 
-    @Query(value = "FROM Index Where page_id = 1 and lemma_id = 1", nativeQuery = true)
-    List<Index> findAllByPageidAndLemmaid(Integer page_id, Integer lemma_id);
+//    @Query(value = "FROM Index Where page_id = 1 and lemma_id = 1", nativeQuery = true)
+    List<Index> findAllByPageIdAndLemmaId (Integer page_id, Integer lemma_id);
 
-    @Query(value = "FROM Index Where lemma_id = :lemma_id", nativeQuery = true)
-    List<Index> findAllByLemmaid(@Param("lemma_id") Integer lemma_id);
+//    @Query(value = "FROM Index Where lemma_id = :lemma_id", nativeQuery = true)
+    List<Index> findAllByLemmaId (@Param("lemma_id") Integer lemma_id);
 
     @Query(value = "FROM Index where lemma_id = :lemma_id and page_id = :page_id", nativeQuery = true)
     List<Index> removePage(@Param("page_id") int page_id, @Param("lemma_id") int lemma_id);

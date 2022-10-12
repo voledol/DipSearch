@@ -51,7 +51,7 @@ public class LemmaService {
     }
 
     public List<Lemma> getLemmaListBySiteId(Integer site_id) {
-        return lemmaRepository.findAllBySiteid(site_id);
+        return lemmaRepository.findAllBySiteId(site_id);
     }
 
     public Integer getLemmaCountBySiteID(Integer site_id) {
@@ -68,6 +68,6 @@ public class LemmaService {
 
     @Transactional
     public void deleteAllLemmaWithSiteId(Integer id) {
-        lemmaRepository.deleteAllBySiteid(id);
+        lemmaRepository.deleteAllBySiteId(id);
     }
 }

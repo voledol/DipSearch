@@ -20,10 +20,13 @@ public class Lemma implements Comparable<Lemma>{
     public int frequency;
     /**Поле id сайта*/
     @Column (name = "site_id")
-    public int siteid;
+    public int siteId;
+
+
+
     /**getters and setters*/
-    public int getSiteid () {return siteid;}
-    public void setSiteid (int siteid) {this.siteid = siteid;}
+    public int getSiteId () {return siteId;}
+    public void setSiteId (int siteId) {this.siteId = siteId;}
 
     public int getId() {
         return id;

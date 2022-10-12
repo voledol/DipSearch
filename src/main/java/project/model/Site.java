@@ -39,13 +39,9 @@ public class Site {
      */
     @Column (name = "last_error")
     private String lastError;
-    /**
-     * Поле адрес сайта
-     */
+
     private String url;
-    /**
-     * Поле имя сайта
-     */
+
     private String name;
 
     @Override

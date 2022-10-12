@@ -58,11 +58,9 @@ public class SearchSystemService {
         List<Page> resultsPage = getResultList(finalInd);
         List<ResultPageDto> resultPageDtoList = moveToResultPage(getRelevance(resultsPage, lemmasFromDB));
         resultPageDtoList = subListByLimit(resultPageDtoList, limit);
-        System.out.println(resultPageDtoList);
         if (resultsPage.isEmpty()) {
             return badRequest();
         }
-        System.out.println(resultPageDtoList);
         return successRequest(resultPageDtoList);
     }
 

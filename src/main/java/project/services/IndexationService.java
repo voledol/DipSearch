@@ -37,7 +37,7 @@ import java.util.Map;
 public class IndexationService {
     public LemCreator lemCreator = new LemCreator();
     public final PageService pageService;
-    public final LemmaService lemmaServise;
+    public final LemmaService lemmaService;
     public final IndexService indexService;
     public final PageCreatorService pageCreatorService;
     public final SiteConnectService siteConnection;
@@ -97,19 +97,19 @@ public class IndexationService {
     public Index indexCreator (Page page, String lemmaName, Integer lemmaFrequency) {
 
         Index index = new Index();
-        Lemma lemma = lemmaServise.getLemmaByName(lemmaName);
+        Lemma lemma = lemmaService.getLemmaByName(lemmaName);
 
         if (lemma != null) {
             lemma.setFrequency(lemma.getFrequency() + lemmaFrequency);
-            lemmaServise.updateLemma(lemma);
+            lemmaService.updateLemma(lemma);
             index.setLemmaId(lemma.getId());
         } else {
             lemma = new Lemma();
             lemma.setLemma(lemmaName);
             lemma.setFrequency(1);
-            lemma.setSiteid(page.getSiteId());
-            lemmaServise.addLemma(lemma);
-            index.setLemmaId((lemmaServise.getLemmaByName(lemmaName)).getId());
+            lemma.setSiteId(page.getSiteId());
+            lemmaService.addLemma(lemma);
+            index.setLemmaId((lemmaService.getLemmaByName(lemmaName)).getId());
         }
         index.setSiteId(page.getSiteId());
         index.setPageId(page.getId());
